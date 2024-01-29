@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Buy</h1>
+<ul>
+    <li>{{ rate_selected.carrier }} {{ rate_selected.service }} -- 
+        {{ shipment_data.from_address.name }} ({{ shipment_data.from_address.city }}, {{ shipment_data.from_address.country }}) 
+        to {{ shipment_data.to_address.name }} ({{ shipment_data.to_address.city }}, {{ shipment_data.to_address.country }}) 
+        --- rate ${{ rate_selected.rate }}</li>
+</ul>
+
+
+
+<a href="{% url 'getpass' %}">all list</a>
+{% endblock %}

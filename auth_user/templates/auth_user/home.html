@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Home</h1>
+<a href="{% url 'login'%}">Login</a> <br>
+<a href="{% url 'signup'%}">Register</a><br>
+<a href="{% url 'create'%}">create</a><br>
+<a href="{% url 'getpass'%}">All orders</a><br>
+<a href="{% url 'addkeys'%}">Start encrypting</a><br>
+{% for message in messages %}
+    <div class="">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<h1>Encryption and Decryption Test</h1>
+
+    <p><strong>Original Message:</strong> {{ message_to_encrypt }}</p>
+    <p><strong>Encrypted Message:</strong> {{ encrypted_message }}</p>
+    <p><strong>Decrypted Message:</strong> {{ decrypted_message }}</p>
+
+{% endblock %}

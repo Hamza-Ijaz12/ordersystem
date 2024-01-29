@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2>Create Shipment</h2>
+{% if message %}
+<p>{{message}}</p>
+{% endif %}
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ to_address_form.as_p }}
+    <hr>
+    {{ from_address_form.as_p }}
+    <hr>
+    {{ parcel_form.as_p }}
+    {{pre_definedpackage.as_p}}
+    <button type="submit">Create Shipment</button>
+  </form>
+
+{% endblock %}

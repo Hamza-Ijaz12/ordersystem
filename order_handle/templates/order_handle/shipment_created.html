@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Shipment Created Successfully</h2>
+{% for rate in rates %}
+<form action="" method="post">
+    {% csrf_token %}
+    <p>{{rate.service}}</p>
+    <p>{{rate.carrier}}</p>
+    <p>{{rate.delivery_days}}</p>
+    <p>{{rate.rate}}</p>
+    <a href=""></a>
+    <input type="text" value="{{rate.id}}" hidden name="rate_id">
+    <button type="submit">Add to cart</button>
+    <hr>
+</form>
+{% endfor %}
+
+
+{% endblock %}

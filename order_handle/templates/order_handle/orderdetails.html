@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Order Details</h1>
+<p>{{shipment}}</p>
+<p>{{ shipment.parcel.data.carrier }} {{ shipment.parcel.data.service }} -- rate ${{ shipment.parcel.data.rate }}
+     </p>
+     <hr>
+     <h2>From Address</h2>
+     <p> {{ shipment.from_address.data.name }} --{{ shipment.from_address.data.street1 }} -- {{ shipment.from_address.data.street2 }} ({{ shipment.from_address.data.city }},{{ shipment.from_address.data.state }}, {{ shipment.from_address.data.country }}) -- {{ shipment.from_address.data.phone }} 
+         </p>
+         <hr>
+         <h2>To Address</h2>
+         <p>
+            {{ shipment.to_address.data.name }} --{{ shipment.to_address.data.street1 }} -- {{ shipment.to_address.data.street2 }} ({{ shipment.to_address.data.city }},{{ shipment.to_address.data.state }}, {{ shipment.to_address.data.country }}) -- {{ shipment.to_address.data.phone }} 
+         </p>
+<p></p>
+<p></p>
+
+{% endblock %}
