@@ -14,10 +14,6 @@ import json
 def home(request):
     stored_messages = messages.get_messages(request)
 
-     # Replace these with your actual keys and passphrase
-    userprofile = UserProfile.objects.first()
-    public_key_path = userprofile.public_key_file.path
-
     passphrase = 'mykey'
 
     # Example usage of encryption and decryption functions
