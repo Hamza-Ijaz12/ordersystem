@@ -34,23 +34,12 @@ def home(request):
 }
     message='THis isa message'
 
-    json_string = json.dumps(my_nested_dict)
-    encrypted_message = encrypt_message(public_key_path, json_string)
-    print('here2------------- ',encrypted_message)
-    decrypted_message = decrypt_message(encrypted_message, passphrase)
-    print('here3------------- ',decrypted_message)
-    if decrypted_message:
-        
-        parsed_dict = json.loads(decrypted_message)
-        print('here4------------- ',parsed_dict)
-    else:
-        parsed_dict='something went wrong'
+    
     
 
     for message in stored_messages:
         print(message,'----------------')
-    context = {'message_to_encrypt': my_nested_dict,'encrypted_message': encrypted_message,
-        'decrypted_message': parsed_dict,}
+    context = {'message_to_encrypt': my_nested_dict}
     return render(request, 'auth_user/home.html', context)
 
 
