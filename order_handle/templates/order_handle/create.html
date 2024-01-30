@@ -3,7 +3,12 @@
 {% block content %}
 <h2>Create Shipment</h2>
 {% if message %}
-<p>{{message}}</p>
+{% for message in messages %}
+    <div class="">
+      <p>{{message}}</p>
+    </div>
+{% endfor %}
+
 {% endif %}
   <form method="post" action="">
     {% csrf_token %}
