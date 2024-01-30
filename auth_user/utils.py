@@ -24,9 +24,9 @@ def encrypt_message(public_key_path, message):
 
 
 
-def decrypt_message( encrypted_message, passphrase='mykey'):
+def decrypt_message( encrypted_message, passphrase):
     gpg = gnupg.GPG()
-
+    print('-------',passphrase)
     decrypted_data = gpg.decrypt(encrypted_message, passphrase=passphrase)
 
     if decrypted_data.ok:

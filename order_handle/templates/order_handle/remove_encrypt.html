@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Get Passphrase</h1>
-{% if stored_messages %}
-    <ul>{{stored_messages}}</ul>
+<h1>Remove Encyptions</h1>
+{% if message %}
+    <ul>{{message}}</ul>
 {% endif %}
 <form action="" method="post">
     {% csrf_token %}

@@ -3,6 +3,9 @@
 {% block content %}
 
 <h1>Buy</h1>
+{% if message %}
+<p>{{message}}</p>
+{% endif %}
 <ul>
     <li>{{ rate_selected.carrier }} {{ rate_selected.service }} -- 
         {{ shipment_data.from_address.name }} ({{ shipment_data.from_address.city }}, {{ shipment_data.from_address.country }}) 
@@ -11,6 +14,13 @@
 </ul>
 
 
+{% if user.is_authenticated %}
+{% if encryption %}
+<a href="{% url 'getpass'%}">All orders</a><br>
+{% else %}
+<a href="{% url 'all'%}">All orders</a><br>
+{% endif %}
+{% endif %}
 
-<a href="{% url 'getpass' %}">all list</a>
+
 {% endblock %}

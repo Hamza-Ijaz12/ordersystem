@@ -13,29 +13,18 @@ import json
 
 def home(request):
     stored_messages = messages.get_messages(request)
-
-    passphrase = 'mykey'
-
-    # Example usage of encryption and decryption functions
-    my_nested_dict = {
-    'name': 'John Doe',
-    'age': 25,
-    'contact': {
-        'email': 'john.doe@example.com',
-        'phone': '555-1234'
-    },
-    'address': '123 Main Street',
-    'city': 'Anytown',
-    'country': 'USA'
-}
-    message='THis isa message'
-
     
-    
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        encryption = True
+    except:
+        encryption = False
+
 
     for message in stored_messages:
         print(message,'----------------')
-    context = {'message_to_encrypt': my_nested_dict}
+    context = {'stored_messages':stored_messages,'encryption':encryption,
+               }
     return render(request, 'auth_user/home.html', context)
 
 

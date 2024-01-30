@@ -8,6 +8,7 @@ urlpatterns = [
     path('buy/', views.buy_order, name='buy'),
     path('all/', views.all_orders, name='all'),
     path('getpass/', views.get_passphrase, name='getpass'),
+    path('removeenc/', views.remove_encryption, name='remove'),
     path('detail/<str:pk>', views.detail_order, name='detail'),
    
     

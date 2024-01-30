@@ -67,6 +67,8 @@ def create_order(request):
                     message = 'Unable to calculate rates'
             elif shipment_data['error']['message'] == 'Missing required parameter.':
                 message = 'Please provide complete dimensions'
+            elif shipment_data['error']['message'] == 'Wrong parameter type.':
+                message = 'Please Check parcel details'
             else:
                 message = shipment_data['error']['message']
         else:
@@ -103,14 +105,30 @@ def confirm_order(request):
 def buy_order(request):
     rate_id = request.session['rate_id']
     shipment_data = request.session['shipment_data']
-
     
+
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        encryption = True
+    except:
+        encryption = False
     # Getting that specific rate and serive
     rate_selected={}
     for rate in shipment_data['rates']:
         if rate['id'] == rate_id:
             rate_selected = rate
             break
+    selected_rate_id = rate_id
+    purchase_data = {
+        "rate": {"id": selected_rate_id}
+    }
+    headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {'EZTKe38a8b44510e48aa8c0f641d0dacaf1buaKSuLUYlgyCTBweXDR0eg'}"
+            }
+    purchase_response = requests.post(f"https://api.easypost.com/v2/shipments/{shipment_data['id']}/buy", data=json.dumps(purchase_data), headers=headers)
+    print(purchase_response.json(),'==================++++++++++')
+    purchase_response_data = purchase_response.json()
     if request.user.is_authenticated:
 
         try:
@@ -121,7 +139,7 @@ def buy_order(request):
             encryption_status = 'no'
        
         # Creating to_address instance
-        to_address_data = shipment_data['to_address']
+        to_address_data = purchase_response_data['to_address']
         to_address_instance = {
         'name':to_address_data['name'],
         'street1':to_address_data['street1'],
@@ -136,7 +154,7 @@ def buy_order(request):
         
 
     #     # Create 'from_address' instance
-        from_address_data = shipment_data['from_address']
+        from_address_data = purchase_response_data['from_address']
         from_address_instance = {
         'name':from_address_data['name'],
         'street1':from_address_data['street1'],
@@ -149,7 +167,7 @@ def buy_order(request):
         }
         
     #     # Create 'parcel' instance
-        parcel_data = shipment_data['parcel']
+        parcel_data = purchase_response_data['parcel']
         parcel_instance = {
         'weight':parcel_data['weight'],
         'length':parcel_data['length'],
@@ -161,8 +179,8 @@ def buy_order(request):
         'service' : rate_selected['service']
         }
         
-        shipment_id=shipment_data['id']
-        tracking_code = shipment_data['tracking_code']
+        shipment_id=purchase_response_data['id']
+        tracking_code = purchase_response_data['tracking_code']
         # making dictonary
         if encryption_status == 'yes':
             to_address_instance = json.dumps(to_address_instance)
@@ -198,17 +216,22 @@ def buy_order(request):
         from_address=from_address_info,
         parcel=parcel_instance_info
     )
+    message=''
+    if 'error' in purchase_response_data:
+        message=purchase_response_data['error']['message']
 
-    context = {'rate_selected':rate_selected,'shipment_data':shipment_data}
+    context = {'rate_selected':rate_selected,'shipment_data':purchase_response_data,'encryption':encryption,
+               'message':message,}
     return render(request, 'order_handle/buy.html', context)
 
 # All order lisitng view
 def all_orders(request):
     message = ''
     shipments = Shipment.objects.filter(user = request.user)
-    for shipment in shipments:
+    if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
-        print('--------',passphrase)
+    for shipment in shipments:
+        
         if shipment.encryption_status == 'yes':
             decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase)
             shipment.shipment_id['data'] = decrypted_message5
@@ -242,8 +265,8 @@ def all_orders(request):
 # Details of one order
 def detail_order(request,pk):
     print(pk,'-----')
-    passphrase = request.session['passphrase']
-    print('--------',passphrase)
+    if 'passphrase' in request.session:
+        passphrase = request.session['passphrase']
     shipment = Shipment.objects.get(pk=pk)
 
     if shipment.encryption_status == 'yes':
@@ -274,14 +297,79 @@ def detail_order(request,pk):
 
 def get_passphrase(request):
     stored_messages = messages.get_messages(request)
+    
     if stored_messages:
         for message in stored_messages:
             stored_messages=message
     if request.method == 'POST':
         passphrase = request.POST.get('passphrase')
-        request.session['passphrase']=passphrase
-        print('--------',passphrase)
+        has_number = any(char.isdigit() for char in passphrase)
         
-        return redirect('all')
+        if has_number:
+            stored_messages = 'Passphrase does not allow numbers only alphabats are allowed.'
+                       
+        else:
+            request.session['passphrase'] = str(passphrase)
+            print('--------', passphrase)
+            return redirect('all')
+            
+        
     context={'stored_messages':stored_messages}
     return render(request,'order_handle/getpass.html',context)
+
+
+
+def remove_encryption(request):
+    message = ''
+    if request.method == 'POST':
+        passphrase = request.POST.get('passphrase')
+        has_number = any(char.isdigit() for char in passphrase)
+        
+        if has_number:
+            message = 'Passphrase does not allow numbers only alphabats are allowed.'
+                       
+        else:
+            print('--------', passphrase)
+            shipments = Shipment.objects.filter(user = request.user)
+            total = len(shipments)
+            count = 0
+            for shipment in shipments:
+                if shipment.encryption_status == 'yes':
+                    decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase)
+                    shipment.shipment_id['data'] = decrypted_message5
+
+                    decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase)
+                    shipment.tracking_code['data'] = decrypted_message1
+
+                    decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase)
+                    
+                    decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase)
+                
+                    decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase)
+                    
+                    if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
+                        message = "Please Check your Passpharase"
+                        break
+                    else:
+                        decrypted_message2 = json.loads(decrypted_message2)
+                        
+                        decrypted_message3 = json.loads(decrypted_message3)
+
+                        decrypted_message4 = json.loads(decrypted_message4)
+                        
+                    shipment.to_address['data'] = decrypted_message2
+                    shipment.from_address['data'] = decrypted_message3
+                    shipment.parcel['data'] = decrypted_message4
+                    shipment.encryption_status = 'no'
+                    shipment.save()
+            for shipment in shipments:
+                if shipment.encryption_status == 'no':
+                    count = count+1
+            if total == count:
+                userprofile = UserProfile.objects.get(user = request.user)
+                userprofile.delete()
+                return redirect('home')
+
+            
+    context={'message':message,}
+    return render(request,'order_handle/remove_encrypt.html',context)
