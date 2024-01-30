@@ -3,7 +3,8 @@
 {% block content %}
 
 <h1>Key Uploading</h1>
-
+<p><b>Note:</b> Use of numeric characters is not allowed in Passphrase. If you provide public key for which
+passphrase includes numeric characters your data will be encrypted but you will not be able to access it.</p>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}

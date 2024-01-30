@@ -10,7 +10,7 @@ from django.contrib import messages
 
 
 def create_order(request):
-    message = ''
+    message = messages.get_messages(request)
     if request.method == 'POST':
         to_address_form = AddressForm(request.POST, prefix='to_address')
         from_address_form = AddressForm(request.POST, prefix='from_address')
@@ -220,8 +220,8 @@ def buy_order(request):
     message=''
     if 'error' in purchase_response_data:
         if purchase_response_data['error']['message'] == 'The request could not be understood by the server due to malformed syntax.':
-            messages.error(request,'Provided Data is not correct kindly verify it')
-            return redirect('home')
+            messages.error(request,'Provided Data is not correct kindly provide accurate Data')
+            return redirect('create')
         else:
             message=purchase_response_data['error']['message']
 
