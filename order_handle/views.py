@@ -219,7 +219,11 @@ def buy_order(request):
         )
     message=''
     if 'error' in purchase_response_data:
-        message=purchase_response_data['error']['message']
+        if purchase_response_data['error']['message'] == 'The request could not be understood by the server due to malformed syntax.':
+            messages.error(request,'Provided Data is not correct kindly verify it')
+            return redirect('home')
+        else:
+            message=purchase_response_data['error']['message']
 
     context = {'rate_selected':rate_selected,'shipment_data':purchase_response_data,'encryption':encryption,
                'message':message,}
