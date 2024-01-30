@@ -130,92 +130,93 @@ def buy_order(request):
     print(purchase_response.json(),'==================++++++++++')
     purchase_response_data = purchase_response.json()
     if request.user.is_authenticated:
-
-        try:
-            userprofile = UserProfile.objects.get(user=request.user)
-            encryption_status = 'yes'
-            public_key_path = userprofile.public_key_file.path
-        except:
-            encryption_status = 'no'
-       
-        # Creating to_address instance
-        to_address_data = purchase_response_data['to_address']
-        to_address_instance = {
-        'name':to_address_data['name'],
-        'street1':to_address_data['street1'],
-        'street2':to_address_data['street2'],
-        'city':to_address_data['city'],
-        'state':to_address_data['state'],
-        'zip':to_address_data['zip'],
-        'country':to_address_data['country'],
-        'phone':to_address_data['phone']
-        }
-
+        if 'created_at' in purchase_response_data:
+            
+            try:
+                userprofile = UserProfile.objects.get(user=request.user)
+                encryption_status = 'yes'
+                public_key_path = userprofile.public_key_file.path
+            except:
+                encryption_status = 'no'
         
+            # Creating to_address instance
+            to_address_data = purchase_response_data['to_address']
+            to_address_instance = {
+            'name':to_address_data['name'],
+            'street1':to_address_data['street1'],
+            'street2':to_address_data['street2'],
+            'city':to_address_data['city'],
+            'state':to_address_data['state'],
+            'zip':to_address_data['zip'],
+            'country':to_address_data['country'],
+            'phone':to_address_data['phone']
+            }
 
-    #     # Create 'from_address' instance
-        from_address_data = purchase_response_data['from_address']
-        from_address_instance = {
-        'name':from_address_data['name'],
-        'street1':from_address_data['street1'],
-        'street2':from_address_data['street2'],
-        'city':from_address_data['city'],
-        'state':from_address_data['state'],
-        'zip':from_address_data['zip'],
-        'country':from_address_data['country'],
-        'phone':from_address_data['phone']
-        }
-        
-    #     # Create 'parcel' instance
-        parcel_data = purchase_response_data['parcel']
-        parcel_instance = {
-        'weight':parcel_data['weight'],
-        'length':parcel_data['length'],
-        'width':parcel_data['width'],
-        'height':parcel_data['height'],
-        'predefined_package':parcel_data['predefined_package'],
-        'rate' : rate_selected['rate'],
-        'carrier' : rate_selected['carrier'],
-        'service' : rate_selected['service']
-        }
-        
-        shipment_id=purchase_response_data['id']
-        tracking_code = purchase_response_data['tracking_code']
-        # making dictonary
-        if encryption_status == 'yes':
-            to_address_instance = json.dumps(to_address_instance)
-            from_address_instance = json.dumps(from_address_instance)
-            parcel_data = json.dumps(parcel_instance)
-            to_address_instance = encrypt_message(public_key_path, to_address_instance)
-            from_address_instance = encrypt_message(public_key_path, from_address_instance)
-            parcel_instance = encrypt_message(public_key_path, parcel_data)
-            shipment_id = encrypt_message(public_key_path, shipment_id)
-            tracking_code = encrypt_message(public_key_path, tracking_code)
-        to_address_info={
-            'data':to_address_instance
-        }
-        from_address_info={
-            'data':from_address_instance
-        }
-        parcel_instance_info={
-            'data':parcel_instance
-        }
-        shipment_id_info={
-            'data':shipment_id
-        }
-        tracking_code_info={
-            'data':tracking_code
-        }
-        # Create 'shipment' instance
-        shipment_instance = Shipment.objects.create(
-        encryption_status = encryption_status,
-        shipment_id=shipment_id_info,
-        tracking_code=tracking_code_info,
-        user = request.user,
-        to_address=to_address_info,
-        from_address=from_address_info,
-        parcel=parcel_instance_info
-    )
+            
+
+            # Create 'from_address' instance
+            from_address_data = purchase_response_data['from_address']
+            from_address_instance = {
+            'name':from_address_data['name'],
+            'street1':from_address_data['street1'],
+            'street2':from_address_data['street2'],
+            'city':from_address_data['city'],
+            'state':from_address_data['state'],
+            'zip':from_address_data['zip'],
+            'country':from_address_data['country'],
+            'phone':from_address_data['phone']
+            }
+            
+            # Create 'parcel' instance
+            parcel_data = purchase_response_data['parcel']
+            parcel_instance = {
+            'weight':parcel_data['weight'],
+            'length':parcel_data['length'],
+            'width':parcel_data['width'],
+            'height':parcel_data['height'],
+            'predefined_package':parcel_data['predefined_package'],
+            'rate' : rate_selected['rate'],
+            'carrier' : rate_selected['carrier'],
+            'service' : rate_selected['service']
+            }
+            
+            shipment_id=purchase_response_data['id']
+            tracking_code = purchase_response_data['tracking_code']
+            # making dictonary
+            if encryption_status == 'yes':
+                to_address_instance = json.dumps(to_address_instance)
+                from_address_instance = json.dumps(from_address_instance)
+                parcel_data = json.dumps(parcel_instance)
+                to_address_instance = encrypt_message(public_key_path, to_address_instance)
+                from_address_instance = encrypt_message(public_key_path, from_address_instance)
+                parcel_instance = encrypt_message(public_key_path, parcel_data)
+                shipment_id = encrypt_message(public_key_path, shipment_id)
+                tracking_code = encrypt_message(public_key_path, tracking_code)
+            to_address_info={
+                'data':to_address_instance
+            }
+            from_address_info={
+                'data':from_address_instance
+            }
+            parcel_instance_info={
+                'data':parcel_instance
+            }
+            shipment_id_info={
+                'data':shipment_id
+            }
+            tracking_code_info={
+                'data':tracking_code
+            }
+            # Create 'shipment' instance
+            shipment_instance = Shipment.objects.create(
+            encryption_status = encryption_status,
+            shipment_id=shipment_id_info,
+            tracking_code=tracking_code_info,
+            user = request.user,
+            to_address=to_address_info,
+            from_address=from_address_info,
+            parcel=parcel_instance_info
+        )
     message=''
     if 'error' in purchase_response_data:
         message=purchase_response_data['error']['message']
