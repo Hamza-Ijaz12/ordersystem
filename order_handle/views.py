@@ -10,7 +10,8 @@ from django.contrib import messages
 
 
 def create_order(request):
-    message = messages.get_messages(request)
+    message = ''
+    stored_message = messages.get_messages(request)
     if request.method == 'POST':
         to_address_form = AddressForm(request.POST, prefix='to_address')
         from_address_form = AddressForm(request.POST, prefix='from_address')
@@ -64,11 +65,14 @@ def create_order(request):
                     return redirect('confirm')
                 else:
                     message = 'Unable to calculate rates'
+            elif shipment_data['error']['message'] == "Invalid 'country', please provide a 2 character ISO country code.":
+                    message = 'Invalid "country", please provide a 2 character ISO country code. '
             elif shipment_data['error']['message'] == 'Missing required parameter.':
-                message = 'Please provide complete dimensions'
+                message = 'Please Check parcel details'
             elif shipment_data['error']['message'] == 'Wrong parameter type.':
                 message = 'Please Check parcel details'
             else:
+                
                 message = shipment_data['error']['message']
         else:
             print('Forms are not valid')
@@ -81,7 +85,7 @@ def create_order(request):
         parcel_form = ParcelForm(prefix='parcel')
         pre_definedpackage = Predefined_package(prefix='predefined_package')
     context = {'to_address_form': to_address_form, 'from_address_form': from_address_form, 'parcel_form': parcel_form
-               ,'message':message,'pre_definedpackage':pre_definedpackage}
+               ,'message':message,'pre_definedpackage':pre_definedpackage,'stored_message':stored_message}
     return render(request, 'order_handle/create.html', context)
 
 
@@ -221,7 +225,12 @@ def buy_order(request):
     message=''
     if 'error' in purchase_response_data:
         if purchase_response_data['error']['message'] == 'The request could not be understood by the server due to malformed syntax.':
-            messages.error(request,'Provided Data is not correct kindly provide accurate Data')
+            if purchase_response_data['error']['errors'][0]['message'] == 'USState: wrong format':
+                messages.error(request,'Provided states are not correct. State examples i.e NY,CA,MA')
+            elif purchase_response_data['error']['errors'][0]['message'] == 'Invalid FromAddress phone number: must be 10 digits.':
+                messages.error(request,'Invalid From Address phone number: must be 10 digits.')
+            else:
+                messages.error(request,'Provided Data is not correct kindly provide accurate Data')
             return redirect('create')
         else:
             message=purchase_response_data['error']['message']

@@ -2,20 +2,30 @@
 {% load static %}
 {% block content %}
 <h2>Create Shipment</h2>
-{% if message %}
-{% for message in messages %}
+{% if stored_message %}
+{% for msg in stored_message %}
     <div class="">
-      <p>{{message}}</p>
+      <p>{{msg}}</p>
     </div>
 {% endfor %}
 
 {% endif %}
+{% if message %}
+    <div class="">
+      <p>{{message}}</p>
+    </div>
+
+
+{% endif %}
   <form method="post" action="">
     {% csrf_token %}
+    <h3>To Address</h3>
     {{ to_address_form.as_p }}
     <hr>
+    <h3>From Address</h3>
     {{ from_address_form.as_p }}
     <hr>
+    <h3>Parcel Details</h3>
     {{ parcel_form.as_p }}
     {{pre_definedpackage.as_p}}
     <button type="submit">Create Shipment</button>

@@ -8,10 +8,18 @@
 {% endif %}
 <ul>
     <li>Your Tracking ID is: {{shipment_data.tracking_code}}</li>
-    <li>{{ rate_selected.carrier }} {{ rate_selected.service }} -- 
-        {{ shipment_data.from_address.name }} ({{ shipment_data.from_address.city }}, {{ shipment_data.from_address.country }}) 
-        to {{ shipment_data.to_address.name }} ({{ shipment_data.to_address.city }}, {{ shipment_data.to_address.country }}) 
-        --- rate ${{ rate_selected.rate }}</li>
+    <li>Carrier:{{ rate_selected.carrier }}</li>
+    <li>Service Type: {{ rate_selected.service }} </li>
+    <li> rate: {{ rate_selected.rate }}$ </li>
+    <br>
+    <h3>Address Details: </h3>
+        <p>
+        <b>From</b><br><br>
+        Sender Name: {{ shipment_data.from_address.name }} <br>
+        sender Detials: ({{ shipment_data.from_address.city }}  {{ shipment_data.from_address.country }}) 
+        <br><br><b>To</b><br><br>
+        Reciver Name: {{ shipment_data.to_address.name }} <br>
+        Receiver Detials: ({{ shipment_data.to_address.city }}, {{ shipment_data.to_address.country }}) </p>
 </ul>
 
 
