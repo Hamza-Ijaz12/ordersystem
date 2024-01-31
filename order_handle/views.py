@@ -179,13 +179,15 @@ def buy_order(request):
             'service' : rate_selected['service']
             }
             
-            shipment_id=purchase_response_data['id']
-            tracking_code = purchase_response_data['tracking_code']
+            shipment_id={'ship_code':purchase_response_data['id']}
+            tracking_code = {'track':purchase_response_data['tracking_code']}
             # making dictonary
             if encryption_status == 'yes':
                 to_address_instance = json.dumps(to_address_instance)
                 from_address_instance = json.dumps(from_address_instance)
                 parcel_data = json.dumps(parcel_instance)
+                tracking_code = json.dumps(tracking_code)
+                shipment_id = json.dumps(shipment_id)
                 to_address_instance = encrypt_message(public_key_path, to_address_instance)
                 from_address_instance = encrypt_message(public_key_path, from_address_instance)
                 parcel_instance = encrypt_message(public_key_path, parcel_data)
@@ -245,10 +247,10 @@ def all_orders(request):
         
         if shipment.encryption_status == 'yes':
             decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
-            shipment.shipment_id['data'] = decrypted_message5
+        
 
             decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
-            shipment.tracking_code['data'] = decrypted_message1
+            
 
             decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
             
@@ -260,15 +262,21 @@ def all_orders(request):
                 messages.error(request,"Please Check your Passpharase")
                 return redirect('getpass')
             else:
+                decrypted_message1 = json.loads(decrypted_message1)
+
                 decrypted_message2 = json.loads(decrypted_message2)
                 
                 decrypted_message3 = json.loads(decrypted_message3)
 
                 decrypted_message4 = json.loads(decrypted_message4)
-                
+
+                decrypted_message5 = json.loads(decrypted_message5)
+            
+            shipment.tracking_code['data'] = decrypted_message1
             shipment.to_address['data'] = decrypted_message2
             shipment.from_address['data'] = decrypted_message3
             shipment.parcel['data'] = decrypted_message4
+            shipment.shipment_id['data'] = decrypted_message5
 
     context = {'shipments':shipments,'message':message}
     return render(request, 'order_handle/allorder.html', context)
@@ -288,10 +296,10 @@ def detail_order(request,pk):
 
     if shipment.encryption_status == 'yes':
             decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
-            shipment.shipment_id['data'] = decrypted_message5
+            
 
             decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
-            shipment.tracking_code['data'] = decrypted_message1
+            
 
             decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
             
@@ -299,14 +307,17 @@ def detail_order(request,pk):
         
             decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
             
-           
+            decrypted_message1 = json.loads(decrypted_message1)
             decrypted_message2 = json.loads(decrypted_message2)
             decrypted_message3 = json.loads(decrypted_message3)
             decrypted_message4 = json.loads(decrypted_message4)
+            decrypted_message5 = json.loads(decrypted_message5)
                 
+            shipment.tracking_code['data'] = decrypted_message1
             shipment.to_address['data'] = decrypted_message2
             shipment.from_address['data'] = decrypted_message3
             shipment.parcel['data'] = decrypted_message4
+            shipment.shipment_id['data'] = decrypted_message5
     
     context = {'shipment':shipment}
     return render(request, 'order_handle/orderdetails.html', context)
@@ -359,11 +370,8 @@ def remove_encryption(request):
         for shipment in shipments:
             if shipment.encryption_status == 'yes':
                 decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
-                shipment.shipment_id['data'] = decrypted_message5
 
                 decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
-                shipment.tracking_code['data'] = decrypted_message1
-                print('-----------------',decrypted_message1)
 
                 decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
                 
@@ -375,15 +383,21 @@ def remove_encryption(request):
                     message = "Please Check your Passpharase"
                     break
                 else:
+                    decrypted_message1 = json.loads(decrypted_message1)
+
                     decrypted_message2 = json.loads(decrypted_message2)
                     
                     decrypted_message3 = json.loads(decrypted_message3)
 
                     decrypted_message4 = json.loads(decrypted_message4)
-                    
+
+                    decrypted_message5 = json.loads(decrypted_message5)
+            
+                shipment.tracking_code['data'] = decrypted_message1
                 shipment.to_address['data'] = decrypted_message2
                 shipment.from_address['data'] = decrypted_message3
                 shipment.parcel['data'] = decrypted_message4
+                shipment.shipment_id['data'] = decrypted_message5
                 shipment.encryption_status = 'no'
                 shipment.save()
         for shipment in shipments:

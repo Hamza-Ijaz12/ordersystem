@@ -3,7 +3,7 @@
 {% block content %}
 
 <h1>Order Details</h1>
-<li>Your Tracking ID is: {{shipment.tracking_code.data}}</li>
+<li>Your Tracking ID is: {{shipment.tracking_code.data.track}}</li>
 <p>{{ shipment.parcel.data.carrier }} {{ shipment.parcel.data.service }} -- rate ${{ shipment.parcel.data.rate }}
      </p>
      <hr>
