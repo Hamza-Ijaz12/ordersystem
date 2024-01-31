@@ -3,11 +3,19 @@
 {% block content %}
 <h1>Get Passphrase</h1>
 {% if stored_messages %}
+   
     <ul>{{stored_messages}}</ul>
+    
 {% endif %}
-<form action="" method="post">
+{% if stored %}
+    
+    <ul>{{stored}}</ul>
+    
+{% endif %}
+<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="text" name="passphrase" id="">
+    {{ form.as_p }}
+    <br><br>
     <button type="submit">Submit</button>
 </form>
 <br><br>

@@ -13,4 +13,4 @@ class SignUpForm(UserCreationForm):
 class KeyUploadForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['public_key_file','private_key_file']
+        fields = ['public_key_file']

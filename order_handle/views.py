@@ -1,11 +1,13 @@
 from django.shortcuts import render,redirect
 import json
+import os
 import requests
 from .forms import *
 from .models import *
 from auth_user.models import *
 from auth_user.utils import *
 from django.contrib import messages
+from django.conf import settings
 # Create your views here.
 
 
@@ -243,12 +245,7 @@ def buy_order(request):
 def all_orders(request):
     message = ''
     shipments = Shipment.objects.filter(user = request.user)
-    try:
-        userprofile = UserProfile.objects.get(user=request.user)
-        private_key_path = userprofile.private_key_file.path
-        
-    except:
-        print('Error in importing private key')
+    private_key_path = request.session['private_key_content']
 
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
@@ -268,7 +265,7 @@ def all_orders(request):
             decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
             
             if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
-                messages.error(request,"Please Check your Passpharase")
+                messages.error(request,"Please Check your Passpharase or Private key")
                 return redirect('getpass')
             else:
                 decrypted_message1 = json.loads(decrypted_message1)
@@ -296,12 +293,7 @@ def detail_order(request,pk):
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
     shipment = Shipment.objects.get(pk=pk)
-    try:
-        userprofile = UserProfile.objects.get(user=request.user)
-        private_key_path = userprofile.private_key_file.path
-        
-    except:
-        print('Error in importing private key')
+    private_key_path = request.session['private_key_content']
 
     if shipment.encryption_status == 'yes':
             decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
@@ -334,24 +326,30 @@ def detail_order(request,pk):
 
 def get_passphrase(request):
     stored_messages = messages.get_messages(request)
+    stored = ''
     
     if stored_messages:
         for message in stored_messages:
             stored_messages=message
+        print(stored_messages)
     if request.method == 'POST':
-        passphrase = request.POST.get('passphrase')
-        # has_number = any(char.isdigit() for char in passphrase)
+        form = PassphrasePrivateKeyForm(request.POST, request.FILES)
         
-        # if has_number:
-        #     stored_messages = 'Passphrase does not allow numbers only alphabats are allowed.'
-                       
+        if form.is_valid():
+            passphrase = form.cleaned_data['passphrase']
+            private_key_content = form.cleaned_data['private_key'].read().decode('utf-8')
+
+            if not private_key_content:
+                stored = 'Please provide a valid private key file.'
+            else:
+                # print(private_key_content)
+                request.session['private_key_content'] = private_key_content
+                request.session['passphrase'] = str(passphrase)
+                return redirect('all')
+    else:
+        form = PassphrasePrivateKeyForm()     
         
-        request.session['passphrase'] = str(passphrase)
-        print('--------', passphrase)
-        return redirect('all')
-            
-        
-    context={'stored_messages':stored_messages}
+    context={'stored_messages':stored_messages,'stored':stored,'form': form}
     return render(request,'order_handle/getpass.html',context)
 
 
@@ -360,63 +358,73 @@ def remove_encryption(request):
     message = ''
     if request.method == 'POST':
         passphrase = request.POST.get('passphrase')
+        form = PassphrasePrivateKeyForm(request.POST, request.FILES)
         
-        try:
-            userprofile = UserProfile.objects.get(user=request.user)
-            private_key_path = userprofile.private_key_file.path
+        if form.is_valid():
+            passphrase = form.cleaned_data['passphrase']
+            if form.is_valid():
+                passphrase = form.cleaned_data['passphrase']
+                private_key_content = form.cleaned_data['private_key'].read().decode('utf-8')
+
+                if not private_key_content:
+                    stored = 'Please provide a valid private key file.'
+                 
         
-        except:
-            print('Error in importing private key')
+            private_key_path = private_key_content
 
-       
         
-      
-        
-        print('--------', passphrase)
-        shipments = Shipment.objects.filter(user = request.user)
-        total = len(shipments)
-        count = 0
-        for shipment in shipments:
-            if shipment.encryption_status == 'yes':
-                decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
+            print('--------', passphrase)
+            shipments = Shipment.objects.filter(user = request.user)
+            total = len(shipments)
+            count = 0
+            for shipment in shipments:
+                if shipment.encryption_status == 'yes':
+                    decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
 
-                decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
+                    decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
 
-                decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
-                
-                decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase, private_key_path)
-            
-                decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
-                
-                if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
-                    message = "Please Check your Passpharase"
-                    break
-                else:
-                    decrypted_message1 = json.loads(decrypted_message1)
-
-                    decrypted_message2 = json.loads(decrypted_message2)
+                    decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
                     
-                    decrypted_message3 = json.loads(decrypted_message3)
+                    decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase, private_key_path)
+                
+                    decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
+                    
+                    if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
+                        message = "Please Check your Passpharase or Private key"
+                        break
+                    else:
+                        decrypted_message1 = json.loads(decrypted_message1)
 
-                    decrypted_message4 = json.loads(decrypted_message4)
+                        decrypted_message2 = json.loads(decrypted_message2)
+                        
+                        decrypted_message3 = json.loads(decrypted_message3)
 
-                    decrypted_message5 = json.loads(decrypted_message5)
+                        decrypted_message4 = json.loads(decrypted_message4)
+
+                        decrypted_message5 = json.loads(decrypted_message5)
+                
+                    shipment.tracking_code['data'] = decrypted_message1
+                    shipment.to_address['data'] = decrypted_message2
+                    shipment.from_address['data'] = decrypted_message3
+                    shipment.parcel['data'] = decrypted_message4
+                    shipment.shipment_id['data'] = decrypted_message5
+                    shipment.encryption_status = 'no'
+                    shipment.save()
+            for shipment in shipments:
+                if shipment.encryption_status == 'no':
+                    count = count+1
+            if total == count:
+                userprofile = UserProfile.objects.get(user = request.user)
+                userprofile.delete()
+                if 'private_key_content' in request.session:
+                    del request.session['private_key_content']
+                if 'passphrase' in request.session:
+                    del request.session['passphrase']
+                return redirect('home')
+    else:
+        form = PassphrasePrivateKeyForm()  
+
+
             
-                shipment.tracking_code['data'] = decrypted_message1
-                shipment.to_address['data'] = decrypted_message2
-                shipment.from_address['data'] = decrypted_message3
-                shipment.parcel['data'] = decrypted_message4
-                shipment.shipment_id['data'] = decrypted_message5
-                shipment.encryption_status = 'no'
-                shipment.save()
-        for shipment in shipments:
-            if shipment.encryption_status == 'no':
-                count = count+1
-        if total == count:
-            userprofile = UserProfile.objects.get(user = request.user)
-            userprofile.delete()
-            return redirect('home')
-
-            
-    context={'message':message,}
+    context={'message':message,'form':form}
     return render(request,'order_handle/remove_encrypt.html',context)

@@ -42,3 +42,7 @@ class ShipmentForm(forms.Form):
     to_address = ToAddressForm()
     from_address = FromAddressForm()
     parcel = ParcelForm()
+
+class PassphrasePrivateKeyForm(forms.Form):
+    passphrase = forms.CharField(widget=forms.PasswordInput)
+    private_key = forms.FileField()
