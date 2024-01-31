@@ -4,7 +4,9 @@ import gnupg
 def encrypt_message(public_key_path, message):
     gpg = gnupg.GPG()
    
-    public_key = gpg.import_keys_file(public_key_path)
+    with open(public_key_path, 'rb') as f:
+        key_data = f.read()
+    public_key = gpg.import_keys(key_data)
 
     if not public_key.results or 'fingerprint' not in public_key.results[0]:
         return "Error importing public key"
@@ -24,8 +26,17 @@ def encrypt_message(public_key_path, message):
 
 
 
-def decrypt_message( encrypted_message, passphrase):
+def decrypt_message( encrypted_message, passphrase,private_key_path):
     gpg = gnupg.GPG()
+    with open(private_key_path, 'rb') as f:
+        key_data = f.read()
+    private_key = gpg.import_keys(key_data)
+
+    if not private_key.results or 'fingerprint' not in private_key.results[0]:
+        return "Error importing public key"
+
+    fingerprint = private_key.results[0]['fingerprint']
+    
     print('-------',passphrase)
     decrypted_data = gpg.decrypt(encrypted_message, passphrase=passphrase)
 

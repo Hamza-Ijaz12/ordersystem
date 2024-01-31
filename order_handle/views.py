@@ -18,14 +18,13 @@ def create_order(request):
         pre_definedpackage = Predefined_package(request.POST, prefix='predefined_package')
         if to_address_form.is_valid() and from_address_form.is_valid() and parcel_form.is_valid() and pre_definedpackage.is_valid():
             print('Forms are valid')
-          
             # print('Cleaned Data:', form.cleaned_data)
             
             to_address_data = to_address_form.cleaned_data
             from_address_data = from_address_form.cleaned_data
             parcel_data = parcel_form.cleaned_data
-            to_address_data['phone'] = str(to_address_data['phone'])
-            parcel_data['weight'] = float(parcel_data['weight'])
+            to_address_data['phone'] =  str(to_address_data['phone'])
+            parcel_data['weight'] =     float(parcel_data['weight'])
             if parcel_data['length']:
                 parcel_data['length'] = float(parcel_data['length'])
             if parcel_data['width']:
@@ -233,22 +232,29 @@ def buy_order(request):
 def all_orders(request):
     message = ''
     shipments = Shipment.objects.filter(user = request.user)
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        private_key_path = userprofile.private_key_file.path
+        
+    except:
+        print('Error in importing private key')
+
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
     for shipment in shipments:
         
         if shipment.encryption_status == 'yes':
-            decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase)
+            decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
             shipment.shipment_id['data'] = decrypted_message5
 
-            decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase)
+            decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
             shipment.tracking_code['data'] = decrypted_message1
 
-            decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase)
+            decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
             
-            decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase)
+            decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase, private_key_path)
         
-            decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase)
+            decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
             
             if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
                 messages.error(request,"Please Check your Passpharase")
@@ -273,19 +279,25 @@ def detail_order(request,pk):
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
     shipment = Shipment.objects.get(pk=pk)
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        private_key_path = userprofile.private_key_file.path
+        
+    except:
+        print('Error in importing private key')
 
     if shipment.encryption_status == 'yes':
-            decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase)
+            decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
             shipment.shipment_id['data'] = decrypted_message5
 
-            decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase)
+            decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
             shipment.tracking_code['data'] = decrypted_message1
 
-            decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase)
+            decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
             
-            decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase)
+            decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase, private_key_path)
         
-            decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase)
+            decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
             
            
             decrypted_message2 = json.loads(decrypted_message2)
@@ -308,15 +320,15 @@ def get_passphrase(request):
             stored_messages=message
     if request.method == 'POST':
         passphrase = request.POST.get('passphrase')
-        has_number = any(char.isdigit() for char in passphrase)
+        # has_number = any(char.isdigit() for char in passphrase)
         
-        if has_number:
-            stored_messages = 'Passphrase does not allow numbers only alphabats are allowed.'
+        # if has_number:
+        #     stored_messages = 'Passphrase does not allow numbers only alphabats are allowed.'
                        
-        else:
-            request.session['passphrase'] = str(passphrase)
-            print('--------', passphrase)
-            return redirect('all')
+        
+        request.session['passphrase'] = str(passphrase)
+        print('--------', passphrase)
+        return redirect('all')
             
         
     context={'stored_messages':stored_messages}
@@ -328,52 +340,59 @@ def remove_encryption(request):
     message = ''
     if request.method == 'POST':
         passphrase = request.POST.get('passphrase')
-        has_number = any(char.isdigit() for char in passphrase)
         
-        if has_number:
-            message = 'Passphrase does not allow numbers only alphabats are allowed.'
-                       
-        else:
-            print('--------', passphrase)
-            shipments = Shipment.objects.filter(user = request.user)
-            total = len(shipments)
-            count = 0
-            for shipment in shipments:
-                if shipment.encryption_status == 'yes':
-                    decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase)
-                    shipment.shipment_id['data'] = decrypted_message5
+        try:
+            userprofile = UserProfile.objects.get(user=request.user)
+            private_key_path = userprofile.private_key_file.path
+        
+        except:
+            print('Error in importing private key')
 
-                    decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase)
-                    shipment.tracking_code['data'] = decrypted_message1
+       
+        
+      
+        
+        print('--------', passphrase)
+        shipments = Shipment.objects.filter(user = request.user)
+        total = len(shipments)
+        count = 0
+        for shipment in shipments:
+            if shipment.encryption_status == 'yes':
+                decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)
+                shipment.shipment_id['data'] = decrypted_message5
 
-                    decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase)
-                    
-                    decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase)
+                decrypted_message1 = decrypt_message(shipment.tracking_code['data'], passphrase, private_key_path)
+                shipment.tracking_code['data'] = decrypted_message1
+                print('-----------------',decrypted_message1)
+
+                decrypted_message2 = decrypt_message(shipment.to_address['data'], passphrase, private_key_path)
                 
-                    decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase)
+                decrypted_message3 = decrypt_message(shipment.from_address['data'], passphrase, private_key_path)
+            
+                decrypted_message4 = decrypt_message(shipment.parcel['data'], passphrase, private_key_path)
+                
+                if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
+                    message = "Please Check your Passpharase"
+                    break
+                else:
+                    decrypted_message2 = json.loads(decrypted_message2)
                     
-                    if decrypted_message1 == False or decrypted_message2 == False or decrypted_message3 == False or decrypted_message4 == False or decrypted_message5 == False:
-                        message = "Please Check your Passpharase"
-                        break
-                    else:
-                        decrypted_message2 = json.loads(decrypted_message2)
-                        
-                        decrypted_message3 = json.loads(decrypted_message3)
+                    decrypted_message3 = json.loads(decrypted_message3)
 
-                        decrypted_message4 = json.loads(decrypted_message4)
-                        
-                    shipment.to_address['data'] = decrypted_message2
-                    shipment.from_address['data'] = decrypted_message3
-                    shipment.parcel['data'] = decrypted_message4
-                    shipment.encryption_status = 'no'
-                    shipment.save()
-            for shipment in shipments:
-                if shipment.encryption_status == 'no':
-                    count = count+1
-            if total == count:
-                userprofile = UserProfile.objects.get(user = request.user)
-                userprofile.delete()
-                return redirect('home')
+                    decrypted_message4 = json.loads(decrypted_message4)
+                    
+                shipment.to_address['data'] = decrypted_message2
+                shipment.from_address['data'] = decrypted_message3
+                shipment.parcel['data'] = decrypted_message4
+                shipment.encryption_status = 'no'
+                shipment.save()
+        for shipment in shipments:
+            if shipment.encryption_status == 'no':
+                count = count+1
+        if total == count:
+            userprofile = UserProfile.objects.get(user = request.user)
+            userprofile.delete()
+            return redirect('home')
 
             
     context={'message':message,}

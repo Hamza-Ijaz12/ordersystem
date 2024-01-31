@@ -5,6 +5,9 @@
 
  	
 <h2>Login</h2>
+{% if message %}
+<ul>{{message}}</ul>
+{% endif %}
 <form method="post" action="">
 	{% csrf_token %}
 	<label for="">Username</label>
