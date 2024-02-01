@@ -245,7 +245,8 @@ def buy_order(request):
 def all_orders(request):
     message = ''
     shipments = Shipment.objects.filter(user = request.user)
-    private_key_path = request.session['private_key_content']
+    if 'private_key_content' in request.session:
+        private_key_path = request.session['private_key_content']
 
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
@@ -293,7 +294,8 @@ def detail_order(request,pk):
     if 'passphrase' in request.session:
         passphrase = request.session['passphrase']
     shipment = Shipment.objects.get(pk=pk)
-    private_key_path = request.session['private_key_content']
+    if 'private_key_content' in request.session:
+        private_key_path = request.session['private_key_content']
 
     if shipment.encryption_status == 'yes':
             decrypted_message5 = decrypt_message(shipment.shipment_id['data'], passphrase, private_key_path)

@@ -2,19 +2,25 @@
 {% load static %}
 {% block content %}
 
-<h2>Shipment Created Successfully</h2>
-{% for rate in rates %}
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Service Type : {{rate.service}}</p>
-    <p>Carrier : {{rate.carrier}}</p>
-    <p>Delivery Days: {{rate.delivery_days}}</p>
-    <p>Rate : {{rate.rate}}$</p>
-    <input type="text" value="{{rate.id}}" hidden name="rate_id">
-    <button type="submit">Add to cart</button>
-    <hr>
-</form>
-{% endfor %}
+<h2>SSelect the service Option</h2>
+<div class="d-flex justify-content-center">
+    
+    {% for rate in rates %}
+    <div class="mt-5 card p-4 ms-4 me-4" style="width: 300px;">
+        
+        <form action="" method="post">
+            {% csrf_token %}
+            <p>Service Type : {{rate.service}}</p>
+            <p>Carrier : {{rate.carrier}}</p>
+            <p>Delivery Days: {{rate.delivery_days}}</p>
+            <p>Rate : {{rate.rate}}$</p>
+            <input type="text" value="{{rate.id}}" hidden name="rate_id">
+            <button class="btn btn-primary" type="submit">Add to cart</button>
+            
+        </form>
+    </div>
+    {% endfor %}
+</div>
 
 
 {% endblock %}

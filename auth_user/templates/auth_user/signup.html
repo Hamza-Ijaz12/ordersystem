@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+
+<div class="mx-auto mt-5">
+    <div>
+
         <!-- signup.html -->
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Sign Up</button>
+            <button class="btn btn-primary" type="submit">Sign Up</button>
         </form>
+    </div>
+</div>
 
 {% endblock %}

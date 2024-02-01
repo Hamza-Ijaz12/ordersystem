@@ -4,31 +4,46 @@
 <h2>Create Shipment</h2>
 {% if stored_message %}
 {% for msg in stored_message %}
-    <div class="">
+    <div class="bg-danger-subtle">
       <p>{{msg}}</p>
     </div>
 {% endfor %}
 
 {% endif %}
 {% if message %}
-    <div class="">
+    <div class="bg-danger-subtle">
       <p>{{message}}</p>
     </div>
 
 
 {% endif %}
-  <form method="post" action="">
+<div class="mt-4">
+
+
+<form method="post" action="">
     {% csrf_token %}
-    <h3>To Address</h3>
-    {{ to_address_form.as_p }}
-    <hr>
-    <h3>From Address</h3>
-    {{ from_address_form.as_p }}
-    <hr>
-    <h3>Parcel Details</h3>
-    {{ parcel_form.as_p }}
-    {{pre_definedpackage.as_p}}
-    <button type="submit">Create Shipment</button>
+    <div class="d-flex justify-content-between">
+      <div>
+
+        <h3>To Address</h3>
+        {{ to_address_form.as_p }}
+      </div>
+      <div>
+
+        <h3>From Address</h3>
+        {{ from_address_form.as_p }}
+      </div>
+
+    <div>
+      <h3>Parcel Details</h3>
+      {{ parcel_form.as_p }}
+      {{pre_definedpackage.as_p}}
+      </div>
+    </div>
+    
+    
+    <button class="btn btn-primary mt-5" type="submit">Create Shipment</button>
   </form>
+</div>
 
 {% endblock %}
