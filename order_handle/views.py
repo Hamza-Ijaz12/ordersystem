@@ -359,22 +359,19 @@ def get_passphrase(request):
 def remove_encryption(request):
     message = ''
     if request.method == 'POST':
-        passphrase = request.POST.get('passphrase')
         form = PassphrasePrivateKeyForm(request.POST, request.FILES)
         
         if form.is_valid():
+            
             passphrase = form.cleaned_data['passphrase']
-            if form.is_valid():
-                passphrase = form.cleaned_data['passphrase']
-                private_key_content = form.cleaned_data['private_key'].read().decode('utf-8')
+            private_key_content = form.cleaned_data['private_key'].read().decode('utf-8')
 
-                if not private_key_content:
-                    stored = 'Please provide a valid private key file.'
+            if not private_key_content:
+                stored = 'Please provide a valid private key file.'
                  
         
             private_key_path = private_key_content
 
-        
             print('--------', passphrase)
             shipments = Shipment.objects.filter(user = request.user)
             total = len(shipments)
