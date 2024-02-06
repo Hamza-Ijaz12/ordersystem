@@ -562,7 +562,7 @@ def webhook_handle(request):
                 sub_status = payload['data']['track_info']['latest_status']['sub_status']
                 main_status = payload['data']['track_info']['latest_status']['status']
                 print('here2')
-                if status == 'NotFound_Other' or status == 'NotFound_InvalidCode':
+                if sub_status == 'NotFound_Other' or sub_status == 'NotFound_InvalidCode':
                     status = 'Tracking number not found for this package'
                     print('here3')
                     shipment.sub_status = sub_status
