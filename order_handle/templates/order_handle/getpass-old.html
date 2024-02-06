@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>Get Passphrase</h1>
+{% if stored_messages %}
+    <div class="bg-danger-subtle">
+    <ul>{{stored_messages}}</ul>
+    </div>
+{% endif %}
+{% if stored %}
+    <div class="bg-danger-subtle">
+
+        <ul>{{stored}}</ul>
+    </div>
+    
+{% endif %}
+<div class="mt-4">
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="btn btn-primary mt-3" type="submit">Submit</button>
+</form>
+
+</div>
+
+
+{% endblock %}

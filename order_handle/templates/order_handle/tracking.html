@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section id="hero">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-12 font-weight-bold text-center">
+				<h1 class="font-weight-bold">Tracking</h1>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<section id="main">
+	<div class="container-fluid">
+		<form class="row justify-content-center" method="POST">
+			{% csrf_token %}
+			<div class="col-lg-9 col-md-11 px-3">
+
+
+				<div class="heading">Tracking</div>
+				{% if message %}
+					<p>{{message}}</p>
+				{% endif %}
+				
+				<div class="form-group">
+
+					<div class="container">
+						<div class="row">
+
+							<input type="text" name="tracking" style="min-height:50px; margin-bottom: 20px;" class="form-control"
+								id="tracking"
+								placeholder=" Currently supports USPS & CanadaPost. No records are stored"></input>
+							<button type="submit" class="btn btn-blue w-100 mt-2">Track Shipment</button>
+
+
+						</div>
+					</div>
+				</div>
+		</form>
+		{% if data %}
+		<h5>Package Status</h5>
+
+		<p style="margin-left: 20px;">
+			Your Tracking code: {{tracking_code}}<br>
+			Status: {{status}}<br>
+			Estimated Delivery Date: {{date}}<br>
+
+			<br>
+		{% endif %}
+	</div>
+</section>
+
+
+{% endblock %}

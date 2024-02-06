@@ -1,28 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Get Passphrase</h1>
-{% if stored_messages %}
-    <div class="bg-danger-subtle">
-    <ul>{{stored_messages}}</ul>
+
+<section id="hero">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 font-weight-bold text-center">
+                <h1 class="font-weight-bold">Decryption</h1>
+            </div>
+        </div>
     </div>
-{% endif %}
-{% if stored %}
-    <div class="bg-danger-subtle">
+</section>
 
-        <ul>{{stored}}</ul>
+
+<section id="main">
+
+
+    <div class="container-fluid">
+        <form class="row justify-content-center" action="" method="POST" enctype="multipart/form-data">
+            <div class="col-lg-9 col-md-11 px-3">
+                <div class="content-box csv">
+                    <h3 style="color: RGB(247, 147, 26);">Provide Private key and Passphrase for Decryption</h3>
+
+                    {% if stored_messages %}
+                    <div class="bg-danger-subtle">
+                        <ul>{{stored_messages}}</ul>
+                    </div>
+                    {% endif %}
+                    {% if stored %}
+                    <div class="bg-danger-subtle">
+
+                        <ul>{{stored}}</ul>
+                    </div>
+
+                    {% endif %}
+                    {% csrf_token %}
+
+                    <div class="form-group mt-4 mb-3">
+                        <label for="dim_fname">Passphrase</label>
+                        <input type="text" value="" name="passphrase" class="form-control" id="dim_fname">
+                    </div>
+                    <label for="file">Public key: </label>
+                    <input type="file" name="private_key" id="file">
+                    <button type="submit" class="btn btn-blue w-100 mt-3">Proceed</button>
+                </div>
+            </div>
+        </form>
     </div>
-    
-{% endif %}
-<div class="mt-4">
-<form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
 
-    <button class="btn btn-primary mt-3" type="submit">Submit</button>
-</form>
 
-</div>
+</section>
 
 
 {% endblock %}

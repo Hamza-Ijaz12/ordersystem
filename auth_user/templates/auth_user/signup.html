@@ -2,16 +2,66 @@
 {% load static %}
 {% block content %}
 
-<div class="mx-auto mt-5">
-    <div>
 
-        <!-- signup.html -->
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-primary" type="submit">Sign Up</button>
+<section id="hero">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 font-weight-bold text-center">
+                <h1 class="font-weight-bold">Register</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="main">
+
+
+    <div class="container-fluid">
+        <form class="row justify-content-center" action="" method="POST" >
+            <div class="col-lg-9 col-md-11 px-3">
+                <div class="content-box csv">
+
+                    <h3 style="color: RGB(247, 147, 26);">Provide your details</h3>
+                    {% csrf_token %}
+
+                    {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                    {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors.0 }}</div>
+                        {% endif %}
+                        {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                        
+
+                    <div class="form-group mt-4 mb-3">
+                        <label for="dim_fname">Username</label>
+                        <input type="text" value="" name="username" class="form-control" id="dim_fname">
+                    </div>
+                    <div class="form-group mt-4 mb-3">
+                        <label for="dim_fname">Email</label>
+                        <input type="email" value="" name="email" class="form-control" id="dim_fname">
+                    </div>
+                    <div class="form-group mt-4 mb-3">
+                        <label for="dim_fname">Passowrd</label>
+                        <input type="password" value="" name="password1" class="form-control" id="dim_fname">
+                    </div>
+                    <div class="form-group mt-4 mb-3">
+                        <label for="dim_fname">Confirm Passowrd</label>
+                        <input type="password" value="" name="password2" class="form-control" id="dim_fname">
+                    </div>
+
+                    <button type="submit" class="btn btn-blue w-100 mt-3">Proceed</button>
+                </div>
+            </div>
         </form>
     </div>
-</div>
+
+
+</section>
 
 {% endblock %}

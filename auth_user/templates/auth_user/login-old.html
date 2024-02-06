@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+ 	
+<h2>Login</h2>
+<div class="mx-auto mt-4">
+	<div class="" style="width: 400px; padding: 20px;">
+
+		{% if message %}
+		<div class="bg-danger-subtle ">
+			
+			<ul class="">{{message}}</ul>
+		</div>
+		{% endif %}
+		<form method="post" action="">
+			{% csrf_token %}
+	<label for="">Username</label>
+	<input type="text" name="username"><br><br>
+	<label for="">Password</label>
+	<input type="password" name="password"><br><br>
+	<button class="btn btn-primary" type="submit">Login</button>
+	
+</form>
+</div>
+</div>
+	
+
+
+{% endblock %}

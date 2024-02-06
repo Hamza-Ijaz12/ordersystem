@@ -1,43 +1,136 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block css %}
+   <style>
+	table {
+	border-collapse: collapse;
+  }
+  
+  td {
+	border: 1px solid black;
+	padding-right: 5px;
+	padding-left: 5px;
+  
+  }
+  
+  
+  th {
+	border: 1px solid black;
+	
+	padding-right: 5px;
+	padding-left: 5px;
+  }
+  
+  tbody tr:first-child td {
+	padding-top: 15px;
+  }
+   </style>
+{% endblock %}  
+
+
 {% block content %}
 
-<h1>Order Details</h1>
-<div class="ms-5 mt-3">
+<section id="hero">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-12 font-weight-bold text-center">
+				<h1 class="font-weight-bold">Order Details</h1>
+			</div>
+		</div>
+	</div>
+</section>
 
-   <li>Your Tracking ID is: {{shipment.tracking_code.data.track}}</li>
-   <p>Carrier : {{ shipment.parcel.data.carrier }} <br>
-      Service Type : {{ shipment.parcel.data.service }} <br> Rate: <b>${{ shipment.parcel.data.rate }}</b>
-   </p>
-</div>
-     <hr>
-     <div class="d-flex justify-content-center mt-4">
 
-     <div class="me-5 card p-4" style="width: 350px;">
+<section id="main">
 
-        <h2>From Address</h2>
-        <p>Sender Name : {{ shipment.from_address.data.name }} <br>
-         Steet : {{ shipment.from_address.data.street1 }} <br>
-         Apt/Suite : {{ shipment.from_address.data.street2 }} <br>
-         City : {{ shipment.from_address.data.city }} <br>
-         State : {{ shipment.from_address.data.state }} <br>
-         Country : {{ shipment.from_address.data.country }} <br>
-         Phone : {{ shipment.from_address.data.phone }} 
-      </p>
-   </div>
-    <div class="ms-5 card p-4" style="width: 350px;">
-       
-       <h2>To Address</h2>
-       <p>
-          Receiver Name : {{ shipment.to_address.data.name }} <br>
-          Steet : {{ shipment.to_address.data.street1 }} <br>
-          Apt/Suite : {{ shipment.to_address.data.street2 }} <br>
-          City : {{ shipment.to_address.data.city }} <br>
-          State : {{ shipment.to_address.data.state }} <br>
-          Country : {{ shipment.to_address.data.country }} <br>
-          Phone : {{ shipment.to_address.data.phone }} </p>
-          
-         </div>
-   </div>
-         
+
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-lg-9 col-md-11 px-3">
+				<div class="content-box csv">
+
+
+
+					<h3 style="color:RGB(247, 147, 26);">Your Order Details: </h3>
+					<p>Tracking ID</p>
+					<p style="margin-left: 20px;">
+						{{shipment.tracking_code}}</p>
+
+					<p>Parcel Details</p>
+
+
+					<table>
+						<tbody>
+							<tr>
+								<th>Carrier</th>
+								<th>Service</th>
+								<th>Rate</th>
+								
+
+							</tr>
+							<tr>
+								<td>{{ shipment.parcel.data.carrier }}</td>
+								<td>{{ shipment.parcel.data.service }}</td>
+								<td>{{ shipment.parcel.data.rate }} $</td>
+								
+
+							</tr>
+						</tbody>
+					</table>
+					<br>
+					<br>
+					<p>Address Details</p>
+
+					<div class="row mx-auto justify-content-center">
+
+						<div class="col-lg-5 col-md-5 col-sm-12 card p-2 me-2 ">
+							<p style="margin-left: 20px;">
+								<b>Name:</b> {{ shipment.from_address.data.name }} <br>
+								<b>Street:</b> {{ shipment.from_address.data.street1 }} <br>
+								<b>Apt/Suite:</b> {{ shipment.from_address.data.street2 }} <br>
+								<b>City:</b> {{ shipment.from_address.data.city }} <br>
+								<b>State:</b> {{ shipment.from_address.data.state }} <br>
+								<b>Country:</b> {{ shipment.from_address.data.country }} <br>
+								<b>Phone:</b> {{ shipment.from_address.data.phone }}
+							</p>
+						</div>
+						<div class="col-1">
+
+						</div>
+						<div class="col-lg-5 col-md-5 col-sm-12 card p-2 ms-4">
+							<p style="margin-left: 20px;">
+								<b>Name:</b> {{ shipment.to_address.data.name }} <br>
+								<b>Street:</b> {{ shipment.to_address.data.street1 }} <br>
+								<b>Apt/Suite:</b> {{ shipment.to_address.data.street2 }} <br>
+								<b>City:</b> {{ shipment.to_address.data.city }} <br>
+								<b>State:</b> {{ shipment.to_address.data.state }} <br>
+								<b>Country:</b> {{ shipment.to_address.data.country }} <br>
+								<b>Phone:</b> {{ shipment.to_address.data.phone }}
+							</p>
+						</div>
+					</div>
+					<br>
+					<br>
+
+
+					<h5>Package Status</h5>
+
+
+
+					<p style="margin-left: 20px;">
+						Your Status: {{shipment.main_status}}<br>
+						Status Explain: {{shipment.sub_status}}<br>
+						
+					<br>
+					
+
+					
+				</div>
+			</div>
+			</form>
+		</div>
+
+
+</section>
 {% endblock %}

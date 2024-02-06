@@ -1,2 +1,55 @@
 {% load static %}
-  
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light " id="menu">
+         <div class="container-fluid">
+             <a class="navbar-brand js-scroll-trigger" href="{% url 'home' %}">
+                 <img src="{% static 'img/logo.png' %}" class="logo"/>
+             </a>
+             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                 Menu
+                 <i class="fa fa-bars"></i>
+             </button>
+             <div class="collapse navbar-collapse" id="navbarResponsive">
+                 <ul class="navbar-nav ml-auto">
+                     <li class="nav-item">
+                         <a class="nav-link" href="{% url 'create' %}">Create Shipment</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link " href="{% url 'tracking' %}">Tracking</a>
+                     </li>
+                     {% if user.is_authenticated %}
+                     
+                     {% if encryption %}
+                     <li class="nav-item">
+                        <a class="nav-link " href="{% url 'getpass'%}">Order History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'remove'%}">Remove Encryption</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'addkeys'%}">Encrypt Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="{% url 'all'%}">Order History</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+
+                    {% else %} 
+                     
+                     <li class="nav-item">
+                         <a class="nav-link" href="{% url 'login'%}">Sign In</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link" href="{% url 'signup'%}">Register</a>
+                     </li>
+                    
+                     {% endif %}
+                 </ul>
+             </div>
+         </div>
+     </nav>
+</header>

@@ -14,19 +14,8 @@ import json
 
 
 def home(request):
-    stored_messages = messages.get_messages(request)
     
-    try:
-        userprofile = UserProfile.objects.get(user=request.user)
-        encryption = True
-    except:
-        encryption = False
-
-
-    for message in stored_messages:
-        print(message,'----------------')
-    context = {'stored_messages':stored_messages,'encryption':encryption,
-               }
+    return redirect('create')
     return render(request, 'auth_user/home.html', context)
 
 
@@ -74,6 +63,12 @@ def user_logout(request):
 
 
 def upload_keys(request):
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+        encryption = True
+        return redirect('create')
+    except:
+        encryption = False
     if request.method == 'POST':
         form = KeyUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -90,12 +85,12 @@ def upload_keys(request):
                     from_address_instance = json.dumps(shipment.from_address['data'])
                     parcel_data = json.dumps(shipment.parcel['data'])
                     shipment_id = json.dumps(shipment.shipment_id['data'])
-                    tracking_code = json.dumps(shipment.tracking_code['data'])
+                    
                     to_address_instance = encrypt_message(public_key_path, to_address_instance)
                     from_address_instance = encrypt_message(public_key_path, from_address_instance)
                     parcel_instance = encrypt_message(public_key_path, parcel_data)
                     shipment_id = encrypt_message(public_key_path, shipment_id)
-                    tracking_code = encrypt_message(public_key_path, tracking_code)
+                    
 
 
                     to_address_info={
@@ -110,23 +105,20 @@ def upload_keys(request):
                     shipment_id_info={
                         'data':shipment_id
                     }
-                    tracking_code_info={
-                        'data':tracking_code
-                    }
+                   
                     shipment.to_address = to_address_info
                     shipment.from_address = from_address_info
                     shipment.parcel = parcel_instance_info
                     shipment.shipment_id = shipment_id_info
-                    shipment.tracking_code = tracking_code_info
                     shipment.encryption_status = 'yes'
                     shipment.save()
 
 
 
-            return redirect('home')
+            return redirect('create')
     else:
         form = KeyUploadForm()
-    return render(request, 'auth_user/uploadkey.html', {'form': form})
+    return render(request, 'auth_user/uploadkey.html', {'form': form,'encryption':encryption})
 
 
 

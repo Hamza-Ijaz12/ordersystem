@@ -8,10 +8,12 @@ class Shipment(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     encryption_status = models.CharField(default='no',max_length=4)
     shipment_id = models.JSONField(default=dict)
-    tracking_code = models.JSONField(default=dict)
+    tracking_code = models.CharField(default = '',max_length=255)
     from_address = models.JSONField(default=dict)
     to_address = models.JSONField(default=dict)
     parcel = models.JSONField(default=dict)
+    sub_status = models.CharField(default = '',null=True,max_length=255)
+    main_status = models.CharField(default = '',null=True,max_length=255)
 
     updated=models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

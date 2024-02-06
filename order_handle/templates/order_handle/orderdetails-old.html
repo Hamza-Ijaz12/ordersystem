@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Order Details</h1>
+<div class="ms-5 mt-3">
+
+   <li>Your Tracking ID is: {{shipment.tracking_code.data.track}}</li>
+   <p>Carrier : {{ shipment.parcel.data.carrier }} <br>
+      Service Type : {{ shipment.parcel.data.service }} <br> Rate: <b>${{ shipment.parcel.data.rate }}</b>
+   </p>
+</div>
+     <hr>
+     <div class="d-flex justify-content-center mt-4">
+
+     <div class="me-5 card p-4" style="width: 350px;">
+
+        <h2>From Address</h2>
+        <p>Sender Name : {{ shipment.from_address.data.name }} <br>
+         Steet : {{ shipment.from_address.data.street1 }} <br>
+         Apt/Suite : {{ shipment.from_address.data.street2 }} <br>
+         City : {{ shipment.from_address.data.city }} <br>
+         State : {{ shipment.from_address.data.state }} <br>
+         Country : {{ shipment.from_address.data.country }} <br>
+         Phone : {{ shipment.from_address.data.phone }} 
+      </p>
+   </div>
+    <div class="ms-5 card p-4" style="width: 350px;">
+       
+       <h2>To Address</h2>
+       <p>
+          Receiver Name : {{ shipment.to_address.data.name }} <br>
+          Steet : {{ shipment.to_address.data.street1 }} <br>
+          Apt/Suite : {{ shipment.to_address.data.street2 }} <br>
+          City : {{ shipment.to_address.data.city }} <br>
+          State : {{ shipment.to_address.data.state }} <br>
+          Country : {{ shipment.to_address.data.country }} <br>
+          Phone : {{ shipment.to_address.data.phone }} </p>
+          
+         </div>
+   </div>
+         
+{% endblock %}

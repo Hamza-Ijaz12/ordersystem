@@ -2,15 +2,40 @@
 {% load static %}
 {% block content %}
 
-<h1>Key Uploading</h1>
-<div class="mt-4">
 
-    
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary mt-3" type="submit">Upload Keys</button>
-    </form>
-</div>
+<section id="hero">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 font-weight-bold text-center">
+                <h1 class="font-weight-bold">Encrypt Data</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="main">
+
+
+    <div class="container-fluid">
+        <form class="row justify-content-center" action="" method="POST"
+            enctype="multipart/form-data">
+            <div class="col-lg-9 col-md-11 px-3">
+                <div class="content-box csv">
+
+                    <h3 style="color: RGB(247, 147, 26)">Provide Public key for Encryption</h3>
+                    {% csrf_token %}
+
+                    <br>
+                    <label for="file">Public key: </label>
+                    <input type="file" name="public_key_file" id="file">
+                    <button type="submit" class="btn btn-blue w-100 mt-3">Proceed</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</section>
 
 {% endblock %}

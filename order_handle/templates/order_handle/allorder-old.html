@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>All list</h1>
+<hr>
+{% if message %}
+<ul>
+  <li>{{message}}</li>
+</ul>
+{% endif %}
+<ul>
+    {% for shipment in shipments %}
+    <a href="{% url 'detail' shipment.id %}">
+      <li>
+        {{ shipment.parcel.data.carrier }} {{ shipment.parcel.data.service }} -- 
+        {{ shipment.from_address.data.name }} ({{ shipment.from_address.data.city }}, {{ shipment.from_address.data.country }}) 
+        to {{ shipment.to_address.data.name }} ({{ shipment.to_address.data.city }}, {{ shipment.to_address.data.country }}) 
+        --- rate ${{ shipment.parcel.data.rate }}
+      </li>
+    </a>
+    {% endfor %}
+  </ul>
+
+
+
+{% endblock %}

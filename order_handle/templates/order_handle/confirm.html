@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section id="hero">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-12 font-weight-bold text-center">
+				<h1 class="font-weight-bold">Confirm Your Service Type</h1>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<section id="main">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-lg-9 col-md-11 px-4">
+				<div class="content-box mb-5">
+					<p class="label mb-2">
+						Select Packages
+					</p>
+					<div class="row">
+						
+						{% for rate in rates %}
+						<div class="col-md-6 col-12 my-2">
+							<form action="" method="POST">
+								{% csrf_token %}
+								<div class="card-container-type">
+									<h2 class="title">{{rate.carrier}}</h2>
+									<b class="offer">{{rate.service}}</b>
+									<h3 class="price">$29</h3>
+									
+									<p class="description">{{rate.delivery_days}} Business Days</p>
+									<input type="text" value="{{rate.id}}" hidden name="rate_id">
+
+									<button class="subscribe-button" type="submit">Confirm</button>
+
+								</div>
+							</form>
+						</div>
+						{% endfor %}
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+{% endblock %}

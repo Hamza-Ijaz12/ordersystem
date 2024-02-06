@@ -9,6 +9,8 @@ urlpatterns = [
     path('all/', views.all_orders, name='all'),
     path('getpass/', views.get_passphrase, name='getpass'),
     path('removeenc/', views.remove_encryption, name='remove'),
+    path('webhook/', views.webhook_handle, name='webhook'),
+    path('tracking/', views.tracking_handle, name='tracking'),
     path('detail/<str:pk>', views.detail_order, name='detail'),
    
     

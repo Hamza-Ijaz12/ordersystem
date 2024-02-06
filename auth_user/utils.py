@@ -1,5 +1,8 @@
 # utils.py
 import gnupg
+from io import BytesIO
+import os
+import tempfile
 
 def encrypt_message(public_key_path, message):
     gpg = gnupg.GPG()
@@ -23,8 +26,6 @@ def encrypt_message(public_key_path, message):
         return str(encrypted_data.status)
 
     
-
-
 
 def decrypt_message( encrypted_message, passphrase,private_key_path):
     gpg = gnupg.GPG()

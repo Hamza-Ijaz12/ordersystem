@@ -11,26 +11,13 @@ class AddressForm(forms.Form):
     phone = forms.CharField(label='Phone', required=False)
 
 class ParcelForm(forms.Form):
-    weight = forms.FloatField(label='Weight', min_value=0)
-    length = forms.FloatField(label='Length', required=False, min_value=1)
-    width = forms.FloatField(label='Width', required=False, min_value=1)
-    height = forms.FloatField(label='Height', required=False, min_value=1)
-
-class Predefined_package(forms.Form):
-    PREDEFINED_PACKAGE_CHOICES = [
-        ('', '---------'),  # Empty choice
-        ('Card', 'Card'),
-        ('Letter', 'Letter'),
-        ('Flat', 'Flat'),
-        ('FlatRateEnvelope', 'FlatRateEnvelope'),
-        ('FlatRateLegalEnvelope', 'FlatRateLegalEnvelope'),
-        ('FlatRatePaddedEnvelope', 'FlatRatePaddedEnvelope'),
-        ('FlatRateWindowEnvelope', 'FlatRateWindowEnvelope'),
-        ('FlatRateCardboardEnvelope', 'FlatRateCardboardEnvelope'),
-        ('SmallFlatRateEnvelope', 'SmallFlatRateEnvelope'),
-        ('Parcel', 'Parcel'),
-    ]
-    predefined_package = forms.ChoiceField(label='Predefined Package', choices=PREDEFINED_PACKAGE_CHOICES,required=False,initial='')
+    weight_lb = forms.FloatField(label='weight_lb', min_value=0)
+    weight_oz = forms.FloatField(label='weight_oz', min_value=0)
+    length = forms.FloatField(label='Length', required=False, )
+    width = forms.FloatField(label='Width', required=False, )
+    height = forms.FloatField(label='Height', required=False)
+    predefined_package  = forms.CharField(label='predefined_package')
+    signature = forms.CharField(label='predefined_package')
 
 class ToAddressForm(AddressForm):
     pass
@@ -38,10 +25,7 @@ class ToAddressForm(AddressForm):
 class FromAddressForm(AddressForm):
     pass
 
-class ShipmentForm(forms.Form):
-    to_address = ToAddressForm()
-    from_address = FromAddressForm()
-    parcel = ParcelForm()
+
 
 class PassphrasePrivateKeyForm(forms.Form):
     passphrase = forms.CharField(widget=forms.PasswordInput)
