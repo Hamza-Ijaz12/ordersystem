@@ -1,4 +1,13 @@
 from django import forms
+from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
+
+def validate_numeric_phone(value):
+    # Remove non-numeric characters
+    numeric_value = ''.join(char for char in value if char.isdigit())
+
+    if len(numeric_value) != 10:
+        raise ValidationError('Phone number must have exactly 10 digits.')
 
 class AddressForm(forms.Form):
     name = forms.CharField(label='Name')
@@ -8,7 +17,8 @@ class AddressForm(forms.Form):
     state = forms.CharField(label='State')
     zip = forms.CharField(label='ZIP Code')
     country = forms.CharField(label='Country')
-    phone = forms.CharField(label='Phone', required=False)
+    phone = forms.CharField(label='Phone', required=False,
+                            validators=[validate_numeric_phone])
 
 class ParcelForm(forms.Form):
     weight_lb = forms.FloatField(label='weight_lb', min_value=0)

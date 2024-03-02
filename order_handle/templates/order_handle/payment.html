@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section id="hero">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-12 font-weight-bold text-center">
+				<h1 class="font-weight-bold">Checkout</h1>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<section id="main">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col-lg-9 col-md-11 px-4">
+				<div class="content-box">
+					{% if message %}
+						<p>{{message}}</p>
+					
+					{% else %}
+					<p class="label">Working on payment</p>
+					{% endif %}
+	
+				</div>
+
+
+				<div class="content-box mt-4">
+					<p class="label mb-2" style="font-size:24px">Order details</p>
+					<table class="table table-bordered">
+						<tr>
+							<th>Product</th>
+							<th>Total</th>
+						</tr>
+						<tr>
+							<td>Shipment Amount</td>
+							<td>{{ rate_selected.rate }} $</td>
+						</tr>
+						<tr>
+							<th class="">Processing fee</th>
+							<th>{{ processing_fee_toadd }} $</th>
+						</tr>
+						<tr>
+							<th class="">Total</th>
+							<th>{{ total }} USD</th>
+						</tr>
+					</table>
+
+				</div>
+
+
+				<div class="content-box my-4">
+					<p class="label mb-2" style="font-size:24px">Pay Now</p>
+					<p class="mb-1">Please follow the directions using the payment gateway below in order to complete your order.</p>
+					<div class="row justify-content-center">
+						<div class="col-lg-11">
+							<div class="payment-box">
+								<div class="row">
+									
+									{% if ready_to_pay %}
+									<div class="col-sm-9 pr-sm-0">
+										<div class="left-side">
+											<div class="row">
+												
+												
+												<div class="col-md-auto text-lg-left text-md-left text-center" >
+													<img src="{{ datapay.result.qrcode_url }}" alt="" style="height: 150px;width: 150px;">
+												</div>
+												<div class="col-md text-lg-left text-md-left text-center align-self-center">
+													<img src="/img/logo.png" height="25" style="filter:invert()">
+													<div>Send EXACTLY <span class="font-weight-bold" id="receive-amount">{{ datapay.result.amount }}</span> coin Name (plus fees) to:</div>
+													<input type="text" class="form-control" value="{{ datapay.result.address }}">
+													<!-- Address for copy -->
+													<span class="d-none" id="receive-address">{{ datapay.result.address }}</span>
+													<!-- ---------------- -->
+													
+												</div>
+											</div>
+											
+										</div>
+									</div>
+									<div class="col-sm-3 pl-sm-0 h">
+										<div class="right-side">
+											<div>
+												<div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+												Waiting for payment
+											</div>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="content-box-disclaimer px-3" style="border-radius:0 0 10px 10px">
+											If you send <span class="font-weight-bold">any other Bitcoin amount</span>, the payment system will <span class="font-weight-bold">ignore it</span>!
+										</div>
+									</div>
+									{% else %}
+									<div class="mt-5 mb-5">
+
+										<form action="" method="post">
+											{% csrf_token %}
+											<div class="email" style="width: 300px;">
+												<label for="dim_tname">Email</label>
+												<input type="email" value="" name="email" class="form-control"
+													id="email" required>
+											</div>
+											<div class="form-group">
+												<label for="dim_tcountry">Coin</label>
+												<select id="dim_tcountry" name="coin"
+													class="country-select form-control" required>
+													<option selected value="select" disabled>Click to select</option>
+													<option value="LTCT">Lite Test coin</option>
+													<option value="BTC">Bitcoin</option>
+													<option value="XMR">Monero</option>
+											</select>
+											</div>
+											<button class="btn btn-blue w-100 mt-2" type="submit">Pay</button>
+
+										</form>
+										<p><b></b></p>
+									</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<p class="label mb-2 mt-4" style="font-size:24px">Payment status</p>
+					<p class="m-0"><span class="font-weight-bold" style="color:#ff3f3f">We are still waiting to receive payment confirmation. If you have sent coins already, please refresh the page in a few moments.</span></p>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</section>
+
+{% endblock %}
+
+
+{% block script %}
+
+
+{% endblock %}

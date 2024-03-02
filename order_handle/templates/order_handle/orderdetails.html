@@ -53,13 +53,16 @@
 
 
 					<h3 style="color:RGB(247, 147, 26);">Your Order Details: </h3>
-					<p>Tracking ID</p>
+					<h5>Tracking ID</h5>
 					<p style="margin-left: 20px;">
 						{{shipment.tracking_code}}</p>
 
-					<p>Parcel Details</p>
+					<h4>Parcel Details</h4>
 
-
+					{% if shipment.encryption_status == 'yes' %}
+					<p>{{ shipment.parcel.data }}</p>
+					{% else %}
+					
 					<table>
 						<tbody>
 							<tr>
@@ -78,12 +81,17 @@
 							</tr>
 						</tbody>
 					</table>
+					{% endif %}
 					<br>
 					<br>
-					<p>Address Details</p>
-
+					<h4>Address Details</h4>
+					{% if shipment.encryption_status == 'yes' %}
+					<h5>From address</h5>
+					<p>{{shipment.from_address.data}}</p>
+					<h5>to address</h5>
+					<p>{{ shipment.to_address.data }}</p>
+					{% else %}
 					<div class="row mx-auto justify-content-center">
-
 						<div class="col-lg-5 col-md-5 col-sm-12 card p-2 me-2 ">
 							<p style="margin-left: 20px;">
 								<b>Name:</b> {{ shipment.from_address.data.name }} <br>
@@ -96,7 +104,7 @@
 							</p>
 						</div>
 						<div class="col-1">
-
+							
 						</div>
 						<div class="col-lg-5 col-md-5 col-sm-12 card p-2 ms-4">
 							<p style="margin-left: 20px;">
@@ -110,6 +118,7 @@
 							</p>
 						</div>
 					</div>
+							{% endif %}
 					<br>
 					<br>
 

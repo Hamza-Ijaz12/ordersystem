@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 font-weight-bold text-center">
-                <h1 class="font-weight-bold">Decryption</h1>
+                <h1 class="font-weight-bold">Processing Fee</h1>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
         <form class="row justify-content-center" action="" method="POST" enctype="multipart/form-data">
             <div class="col-lg-9 col-md-11 px-3">
                 <div class="content-box csv">
-                    <h3 style="color: RGB(247, 147, 26);">Provide Private key and Passphrase for Decryption</h3>
+                    <h3 style="color: RGB(247, 147, 26);">Processing fee handle</h3>
 
                     {% if stored_messages %}
                     <div class="bg-danger-subtle">
@@ -35,13 +35,12 @@
 
                     {% endif %}
                     {% csrf_token %}
-
+                    <p>Your Previous processing fee in Percentage is <b>{{ fee.fee }}</b></p>
                     <div class="form-group mt-4 mb-3">
-                        <label for="dim_fname">Passphrase</label>
-                        <input type="text" value="" name="passphrase" class="form-control" id="dim_fname">
+                        <label for="dim_fname">Fee</label>
+                        <input type="number" value="" name="processing_fee" class="form-control" id="dim_fname" min="0" step="0.01">
                     </div>
-                    <label for="file">Public key: </label>
-                    <input type="file" name="private_key" id="file">
+                    <p><b>Note : </b>Keep in mind the value here is in percentage and upto two decimal places.</p>
                     <button type="submit" class="btn btn-blue w-100 mt-3">Proceed</button>
                 </div>
             </div>

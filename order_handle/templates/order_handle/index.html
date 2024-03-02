@@ -76,9 +76,17 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="dim_fstate">State*</label>
-                                        <input type="text" value="" name="from_address-state" class="form-control"
-                                            id="dim_fstate" required>
+                                    <label for="dim_fstate">State*</label>
+                                    <select id="dim_fstate" name="from_address-state"
+                                    class="country-select form-control" required>
+                                    <option selected value="select" disabled>Click to select</option>
+                                    {% for state in states %}
+                                    <option value="{{ state.abbr }}" >{{ state.name }}</option>
+                                    {% endfor %}
+                                    </select>
+                                        
+                                        <!-- <input type="text" value="" name="from_address-state" class="form-control"
+                                            id="dim_fstate" required> -->
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -338,6 +346,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                
+                                {{ from_address_form.phone.errors }}
                                 <label for="dim_fphone">Phone Number <span class="text-muted font-weight-normal">(Only
                                         for Express shipping)</span></label>
                                 <input type="text" value="" name="from_address-phone" class="form-control"
@@ -385,8 +395,14 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="dim_tstate">State</label>
-                                            <input type="text" value="" name="to_address-state" class="form-control"
-                                                id="dim_tstate" required>
+                                            <select id="dim_fstate" name="to_address-state" class="country-select form-control" required>
+                                                <option value="select" disabled>Click to select</option>
+                                                {% for state in states %}
+                                                    <option value="{{ state.abbr }}">{{ state.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <!-- <input type="text" value="" name="to_address-state" class="form-control"
+                                                id="dim_tstate" required> -->
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -645,6 +661,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
+                                    {{ to_address_form.phone.errors }}
                                     <label for="dim_tphone">Phone Number <span
                                             class="text-muted font-weight-normal">(Only for Express
                                             shipping)</span></label>

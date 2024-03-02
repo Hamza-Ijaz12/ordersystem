@@ -28,15 +28,13 @@
                     {% endif %}
                     <table class="table table-bordered">
                         <tr>
-                            <th>Product</th>
-                            <th>Amount</th>
+                            <th>Tracking code</th>
+                            
                         </tr>
                         {% for shipment in shipments %}
                         <tr>
-                            <td> <a href="{% url 'detail' shipment.id %}">{{ shipment.parcel.data.carrier }} {{ shipment.parcel.data.service }} -- {{ shipment.from_address.data.name }} ({{ shipment.from_address.data.city }}, {{ shipment.from_address.data.country }})
-                                 to {{ shipment.to_address.data.name }} ({{ shipment.to_address.data.city }},
-                                 {{ shipment.to_address.data.country }}) </a></td>
-                            <td><a href="{% url 'detail' shipment.id %}">{{ shipment.parcel.data.rate }} USD</a></td>
+                            <td> <a href="{% url 'detail' shipment.id %}">{{ shipment.tracking_code }} </a></td>
+                            
                         </tr>
                         {% endfor %}
                       

@@ -17,12 +17,14 @@
                      <li class="nav-item">
                          <a class="nav-link " href="{% url 'tracking' %}">Tracking</a>
                      </li>
+                     
                      {% if user.is_authenticated %}
+                     <li class="nav-item">
+                        <a class="nav-link " href="{% url 'all'%}">Order History</a>
+                     </li>
                      
                      {% if encryption %}
-                     <li class="nav-item">
-                        <a class="nav-link " href="{% url 'getpass'%}">Order History</a>
-                    </li>
+                     
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'remove'%}">Remove Encryption</a>
                     </li>
@@ -30,9 +32,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'addkeys'%}">Encrypt Data</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href="{% url 'all'%}">Order History</a>
-                    </li>
+                    
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
