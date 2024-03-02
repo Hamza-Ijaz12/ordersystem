@@ -129,7 +129,7 @@ def create_order(request):
         else:
             print('Forms are not valid')
             print(to_address_form.errors,'to')
-            
+
             print(from_address_form.errors,'from')
             print(parcel_form.errors)
     else:
@@ -173,15 +173,15 @@ def get_payment(request):
     message = ''
     rate_id = request.session['rate_id']
     shipment_data = request.session['shipment_data']
-    processing_fee =  Processing_Fee.objects.first()
-    if not processing_fee:
-        processing_fee = 0
+    proceesing_fee =  Processing_Fee.objects.first()
+    if not proceesing_fee:
+        proceesing_fee = 0
     rate_selected={}
     for rate in shipment_data['rates']:
         if rate['id'] == rate_id:
             rate_selected = rate
             break
-    processing_fee_toadd = round(float(rate_selected['rate']) * (processing_fee.fee/100), 2)
+    processing_fee_toadd = round(float(rate_selected['rate']) * (proceesing_fee.fee/100), 2)
 
     ready_to_pay = False
     # Checking status of transaction
@@ -272,13 +272,15 @@ def get_payment(request):
 
 # Buying shipment
 def buy_order(request):
+    
     if 'payment_status' in request.session:
         if request.session['payment_status']:
             rate_id = request.session['rate_id']
             shipment_data = request.session['shipment_data']
             proceesing_fee = Processing_Fee.objects.first()
-            if not processing_fee:
-                processing_fee = 0
+            print(proceesing_fee.fee,'----------------')
+            if not proceesing_fee.fee:
+                proceesing_fee.fee = 0
             
             try:
                 userprofile = UserProfile.objects.get(user=request.user)
@@ -320,7 +322,7 @@ def buy_order(request):
                 
             if request.user.is_authenticated:
                 if 'created_at' in purchase_response_data:
-                    processing_fee_toadd = round(float(rate_selected['rate']) * (processing_fee.fee/100), 2)
+                    processing_fee_toadd = round(float(rate_selected['rate']) * (proceesing_fee.fee/100), 2)
                     
                     try:
                         userprofile = UserProfile.objects.get(user=request.user)
@@ -497,34 +499,37 @@ def detail_order(request,pk):
 
 
 def get_processingfee(request):
-    try:
-        userprofile = UserProfile.objects.get(user=request.user)
-        encryption = True
-    except:
-        encryption = False
+    if request.user.is_staff:
+        try:
+            userprofile = UserProfile.objects.get(user=request.user)
+            encryption = True
+        except:
+            encryption = False
 
-    fees = Processing_Fee.objects.first()
+        fees = Processing_Fee.objects.first()
 
-    if request.method == 'POST':
-        processing_fee = request.POST.get('processing_fee')
-        if fees:
-            print('----------------------')
-            print('fee type',type(fees))
-            print('get type',type(processing_fee))
-            fees.fee = processing_fee
-            fees.save()
-        else:
-            Processing_Fee.objects.create(
-                fee = processing_fee
-            )
-        print(processing_fee,'feeeeee')
+        if request.method == 'POST':
+            processing_fee = request.POST.get('processing_fee')
+            if fees:
+                print('----------------------')
+                print('fee type',type(fees))
+                print('get type',type(processing_fee))
+                fees.fee = processing_fee
+                fees.save()
+            else:
+                Processing_Fee.objects.create(
+                    fee = processing_fee
+                )
+            print(processing_fee,'feeeeee')
+            context={'encryption':encryption,'fee':fees}
+            return render(request,'order_handle/get_fee.html',context)
+        
+        
+            
         context={'encryption':encryption,'fee':fees}
         return render(request,'order_handle/get_fee.html',context)
-    
-       
-        
-    context={'encryption':encryption,'fee':fees}
-    return render(request,'order_handle/get_fee.html',context)
+    else:
+        return redirect('create')
 
 
 
@@ -748,10 +753,10 @@ def webhook_ipn_handle(request):
                         tracking_code = purchase_response_data['tracking_code']
                         if payment_handle_inst.user:
                             print('payment was pending and shipment bought and user history set')
-                            processing_fee = Processing_Fee.objects.first()
-                            if not processing_fee:
-                                processing_fee = 0
-                            processing_fee_toadd = round(float(rate_selected['rate']) * (processing_fee.fee/100), 2)
+                            proceesing_fee = Processing_Fee.objects.first()
+                            if not proceesing_fee:
+                                proceesing_fee = 0
+                            proceesing_fee_toadd = round(float(rate_selected['rate']) * (proceesing_fee.fee/100), 2)
                             try:
                                 userprofile = UserProfile.objects.get(user = payment_handle_inst.user)
                                 encryption_status = 'yes'
@@ -795,7 +800,7 @@ def webhook_ipn_handle(request):
                             'width':parcel_data['width'],
                             'height':parcel_data['height'],
                             'predefined_package':parcel_data['predefined_package'],
-                            'rate' : float(rate_selected['rate']) + processing_fee_toadd ,
+                            'rate' : float(rate_selected['rate']) + proceesing_fee_toadd ,
                             'carrier' : rate_selected['carrier'],
                             'service' : rate_selected['service']
                             }
