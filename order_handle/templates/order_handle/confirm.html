@@ -28,12 +28,12 @@
 							<form action="" method="POST">
 								{% csrf_token %}
 								<div class="card-container-type">
-									<h2 class="title">{{rate.carrier}}</h2>
-									<b class="offer">{{rate.service}}</b>
-									<h3 class="price">${{rate.rate}}</h3>
+									<h2 class="title">{{rate.rate.carrier}}</h2>
+									<b class="offer">{{rate.rate.service}}</b>
+									<h3 class="price">${{rate.total}}</h3>
 									
-									<p class="description">{{rate.delivery_days}} Business Days</p>
-									<input type="text" value="{{rate.id}}" hidden name="rate_id">
+									<p class="description">{{rate.rate.delivery_days}} Business Days</p>
+									<input type="text" value="{{rate.rate.id}}" hidden name="rate_id">
 
 									<button class="subscribe-button" type="submit">Confirm</button>
 

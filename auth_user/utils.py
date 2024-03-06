@@ -7,9 +7,9 @@ import tempfile
 def encrypt_message(public_key_path, message):
     gpg = gnupg.GPG()
    
-    with open(public_key_path, 'rb') as f:
-        key_data = f.read()
-    public_key = gpg.import_keys(key_data)
+    # with open(public_key_path, 'rb') as f:
+    #     key_data = f.read()
+    public_key = gpg.import_keys(public_key_path)
 
     if not public_key.results or 'fingerprint' not in public_key.results[0]:
         return "Error importing public key"

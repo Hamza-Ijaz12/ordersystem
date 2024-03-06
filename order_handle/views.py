@@ -152,12 +152,16 @@ def confirm_order(request):
         encryption = True
     except:
         encryption = False
+    proceesing_fee =  Processing_Fee.objects.first()
     shipment_data = request.session['shipment_data']
     ratesall = shipment_data['rates']
     rates = []
     for rate in ratesall:
         if rate['service'] == 'Priority' or rate['service'] == 'GroundAdvantage' or rate['service'] == 'Express':
-            rates.append(rate)
+            processing_fee_toadd = round(float(rate['rate']) * (proceesing_fee.fee/100), 2)
+            total = processing_fee_toadd + float(rate['rate'])
+            dic = {'rate':rate,'total':total}
+            rates.append(dic)
         
     if request.method =='POST':
         request.session['rate_id'] = request.POST.get('rate_id')
@@ -170,6 +174,7 @@ def confirm_order(request):
 
 # Payment view where payment reciving info will be shown
 def get_payment(request):
+    coin = ''
     message = ''
     rate_id = request.session['rate_id']
     shipment_data = request.session['shipment_data']
@@ -195,7 +200,10 @@ def get_payment(request):
         'cmd': 'get_tx_info',
         'txid' : request.session['transaction_id']
         }
-        response = gatewayapicall(payload)
+        try:
+            response = gatewayapicall(payload)
+        except:
+            return redirect('payment')
         print(response)
         if response['error'] == 'ok':
             if response['result']['status'] >= 100 or response['result']['status'] >= 2:
@@ -216,6 +224,7 @@ def get_payment(request):
         
         email = request.POST.get('email')
         coin = request.POST.get('coin')
+        request.session['coin_name'] = coin
         # makeing Payment_handle model instance so that upon payment confirmation webhook send tracking code to email of user
         # Payment gateway
         payload = {
@@ -227,8 +236,11 @@ def get_payment(request):
             'currency2' : coin,
             'buyer_email'  : email
         }
-        datapay = gatewayapicall(payload)
-        
+        try:
+    
+            datapay = gatewayapicall(payload)
+        except:
+            return redirect('payment')
         print(datapay)
         # Payment gateway end
         if datapay['error'] == 'ok':
@@ -267,14 +279,16 @@ def get_payment(request):
    
     total = processing_fee_toadd + float(rate_selected['rate'])
     context = {'rate_selected':rate_selected,'encryption':encryption,'processing_fee_toadd':processing_fee_toadd,
-               'message':message,'datapay':datapay,'ready_to_pay':ready_to_pay,'total':total}
+               'message':message,'datapay':datapay,'ready_to_pay':ready_to_pay,'total':total,'coin':coin}
     return render(request, 'order_handle/payment.html', context)
 
 # Buying shipment
 def buy_order(request):
     
     if 'payment_status' in request.session:
+        
         if request.session['payment_status']:
+            coin = request.session['coin_name']
             rate_id = request.session['rate_id']
             shipment_data = request.session['shipment_data']
             proceesing_fee = Processing_Fee.objects.first()
@@ -297,6 +311,8 @@ def buy_order(request):
             purchase_data = {
                 "rate": {"id": selected_rate_id}
             }
+            processing_fee_toadd = round(float(rate_selected['rate']) * (proceesing_fee.fee/100), 2)
+            total = processing_fee_toadd + float(rate_selected['rate'])
             headers = {
                         "Content-Type": "application/json",
                         "Authorization": f"Bearer {'EZTKe38a8b44510e48aa8c0f641d0dacaf1buaKSuLUYlgyCTBweXDR0eg'}"
@@ -448,9 +464,9 @@ def buy_order(request):
                         
                 else:
                     message=purchase_response_data['error']['message']
-
+            
             context = {'rate_selected':rate_selected,'shipment_data':purchase_response_data,'encryption':encryption,
-                    'message':message,}
+                    'message':message,'coin':coin,'total':total}
             return render(request, 'order_handle/buy.html', context)
         else:
             return redirect('create')

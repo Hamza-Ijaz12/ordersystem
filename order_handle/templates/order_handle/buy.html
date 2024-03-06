@@ -37,8 +37,8 @@
 						<tr>
 							<th class="p-0">{{shipment_data.tracking_code}}</th>
 
-							<th>${{ rate_selected.rate }}</th>
-							<th style="border-right: 0;">Bitcoin (BTC)</th>
+							<th>${{ total }}</th>
+							<th style="border-right: 0;">{{ coin }} (BTC)</th>
 						</tr>
 					</table>
 				</div>
@@ -56,15 +56,15 @@
 								  {{ shipment_data.from_address.country }}) To {{shipment_data.to_address.name }} 
 								  ({{ shipment_data.to_address.city }}, {{shipment_data.to_address.state }},
 								   {{ shipment_data.to_address.country }})</td>
-							<td>{{ rate_selected.rate }} USD</td>
+							<td>{{ total }} USD</td>
 						</tr>
 						<tr>
 							<th class="text-right">Payment method</th>
-							<th>Bitcoin</th>
+							<th>{{coin}}</th>
 						</tr>
 						<tr>
 							<th class="text-right">Total</th>
-							<th>{{ rate_selected.rate }} USD</th>
+							<th>{{ total }} USD</th>
 						</tr>
 					</table>
 

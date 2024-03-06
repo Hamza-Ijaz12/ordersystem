@@ -24,7 +24,7 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-
+            messages.success(request,'Account was created successfully')
             context = {'form': form}
             return redirect('home')
     else:
@@ -70,14 +70,15 @@ def upload_keys(request):
     except:
         encryption = False
     if request.method == 'POST':
-        form = KeyUploadForm(request.POST, request.FILES)
+        # form = KeyUploadForm(request.POST, request.FILES)
+        form = KeyUploadForm(request.POST)
         if form.is_valid():
             user = request.user
             user_profile = form.save(commit=False)
             user_profile.user = user
             user_profile.save()
             user_profile= UserProfile.objects.get(user = request.user)
-            public_key_path = user_profile.public_key_file.path
+            public_key_path = user_profile.public_key_file
             shipments = Shipment.objects.filter(user = request.user)
             for shipment in shipments:
                 if shipment.encryption_status == 'no':

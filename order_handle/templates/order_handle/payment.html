@@ -22,7 +22,7 @@
 						<p>{{message}}</p>
 					
 					{% else %}
-					<p class="label">Working on payment</p>
+					<p class="label">Payment</p>
 					{% endif %}
 	
 				</div>
@@ -37,16 +37,10 @@
 						</tr>
 						<tr>
 							<td>Shipment Amount</td>
-							<td>{{ rate_selected.rate }} $</td>
+							<td> {{ total }} $</td>
 						</tr>
-						<tr>
-							<th class="">Processing fee</th>
-							<th>{{ processing_fee_toadd }} $</th>
-						</tr>
-						<tr>
-							<th class="">Total</th>
-							<th>{{ total }} USD</th>
-						</tr>
+						
+						
 					</table>
 
 				</div>
@@ -54,7 +48,7 @@
 
 				<div class="content-box my-4">
 					<p class="label mb-2" style="font-size:24px">Pay Now</p>
-					<p class="mb-1">Please follow the directions using the payment gateway below in order to complete your order.</p>
+					<p class="mb-1">Please provide the email and choose the coin you would want to pay in. After you have choose the coin we will show you the exact amount and addrees/QR code for payment</p>
 					<div class="row justify-content-center">
 						<div class="col-lg-11">
 							<div class="payment-box">
@@ -70,12 +64,18 @@
 													<img src="{{ datapay.result.qrcode_url }}" alt="" style="height: 150px;width: 150px;">
 												</div>
 												<div class="col-md text-lg-left text-md-left text-center align-self-center">
-													<img src="/img/logo.png" height="25" style="filter:invert()">
-													<div>Send EXACTLY <span class="font-weight-bold" id="receive-amount">{{ datapay.result.amount }}</span> coin Name (plus fees) to:</div>
+													<img src="{% static '/img/logo.png' %}" height="40" style="">
+													<div>Send EXACTLY <span class="font-weight-bold" id="receive-amount">{{ datapay.result.amount }}</span> {{ coin }} (plus fees) to:</div>
 													<input type="text" class="form-control" value="{{ datapay.result.address }}">
 													<!-- Address for copy -->
 													<span class="d-none" id="receive-address">{{ datapay.result.address }}</span>
 													<!-- ---------------- -->
+													<div class="row mt-2">
+														<div class="col-md-5 col-12">
+															<a href="{% url 'payment' %}" class="btn btn-blue h-auto" style="color: white; letter-spacing: 0.05cm;">Refresh</a>
+														</div>
+														
+													</div>
 													
 												</div>
 											</div>
@@ -92,7 +92,7 @@
 									</div>
 									<div class="col-12">
 										<div class="content-box-disclaimer px-3" style="border-radius:0 0 10px 10px">
-											If you send <span class="font-weight-bold">any other Bitcoin amount</span>, the payment system will <span class="font-weight-bold">ignore it</span>!
+											If you send <span class="font-weight-bold">any other coin or less amount </span>, the payment system will <span class="font-weight-bold">ignore it</span>!
 										</div>
 									</div>
 									{% else %}
@@ -127,7 +127,8 @@
 					</div>
 					
 					<p class="label mb-2 mt-4" style="font-size:24px">Payment status</p>
-					<p class="m-0"><span class="font-weight-bold" style="color:#ff3f3f">We are still waiting to receive payment confirmation. If you have sent coins already, please refresh the page in a few moments.</span></p>
+					<p class="m-0"><span class="font-weight-bold" style="color:#ff3f3f">We are still waiting to receive payment confirmation. If you have sent coins already, please refresh the page in a few moments. <br>
+					If you have not payed already and want to change the coin kindly follow the instruction above.</span></p>
 				</div>
 				
 			</div>
